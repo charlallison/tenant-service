@@ -2,7 +2,7 @@ import {DynamoDBClient, GetItemCommand, UpdateItemCommand} from "@aws-sdk/client
 import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
 import schema from "./schema";
 import {middyfy} from "../../src/libs/lambda";
-import {marshall} from "@aws-sdk/util-dynamodb";
+import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 import {NotFound, InternalServerError } from "http-errors";
 
 const dynamoDBClient = new DynamoDBClient({
@@ -23,27 +23,28 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   }
 
   try{
-    await dynamoDBClient.send(new UpdateItemCommand({
+    const item = await dynamoDBClient.send(new UpdateItemCommand({
       Key: marshall({ id }),
       TableName: process.env.TENANT_TABLE_NAME,
-      UpdateExpression: 'SET name = :name, phone = :phone',
+      UpdateExpression: 'SET #name = :name, phone = :phone',
       ExpressionAttributeValues: {
         ':name': marshall(name),
         ':phone': marshall(phone)
       },
+      ExpressionAttributeNames: {
+        '#name': 'name'
+      },
       ReturnValues: 'ALL_NEW',
     }));
+
+    return formatJSONResponse({
+      message: `Tenant updated!`,
+      tenant: unmarshall(item.Attributes)
+    });
   }catch (e) {
     console.error(e);
     throw new InternalServerError();
   }
-
-
-  return formatJSONResponse({
-    message: `Tenant updated!`
-  });
-
-
 };
 
 export const main = middyfy(handler);

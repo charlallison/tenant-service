@@ -1,5 +1,5 @@
 updateTenant:
-  handler: ./lambda/CreateTenant/index.main
+  handler: ./lambda/UpdateTenant/index.main
   description: "Update Tenant"
   memorySize: 512
   timeout: 10 # API Gateway has a timeout of 30 seconds
