@@ -1,5 +1,5 @@
-getTenants:
-  handler: ./lambda/GetTenants/index.main
+listTenants:
+  handler: ./lambda/ListTenants/index.main
   description: "Fetches all the saved tenant"
   memorySize: 512
   timeout: 10 # API Gateway has a timeout of 30 seconds
