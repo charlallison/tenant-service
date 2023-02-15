@@ -1,0 +1,16 @@
+deleteTenant:
+  handler: ./lambda/DeleteTenant/index.main
+  description: "Delete tenant by id"
+  memorySize: 512
+  timeout: 10 # API Gateway has a timeout of 30 seconds
+  environment:
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DeleteItem
+      Resource:
+        - ${self:custom.TenantsTable.arn}
+  events:
+    - http:
+        method: delete
+        path: /tenants/{id}
