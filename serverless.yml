@@ -23,9 +23,9 @@ provider:
 functions:
   - ${file(./lambda/CreateTenant/config.yml)}
   - ${file(./lambda/UpdateTenant/config.yml)}
-  - ${file(./lambda/GetTenants/config.yml)}
+  - ${file(./lambda/ListTenants/config.yml)}
   - ${file(./lambda/DeleteTenant/config.yml)}
-#  - ${file(./lambda/GetTenant/config.yml)}
+  - ${file(./lambda/GetTenant/config.yml)}
 #  - ${file(./lambda/NotifyTenants/config.yml)}
 #  - ${file(./lambda/PayRent/config.yml)}
 

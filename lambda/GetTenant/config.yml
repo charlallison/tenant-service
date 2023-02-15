@@ -1,0 +1,16 @@
+getTenants:
+  handler: ./lambda/GetTenant/index.main
+  description: "Get a tenant using the Id"
+  memorySize: 512
+  timeout: 10 # API Gateway has a timeout of 30 seconds
+  environment:
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+      Resource:
+        - ${self:custom.TenantsTable.arn}
+  events:
+    - http:
+        method: get
+        path: /tenants/{id}
