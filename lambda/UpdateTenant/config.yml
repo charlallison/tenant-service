@@ -1,0 +1,17 @@
+updateTenant:
+  handler: ./lambda/CreateTenant/index.main
+  description: "Update Tenant"
+  memorySize: 512
+  timeout: 10 # API Gateway has a timeout of 30 seconds
+  environment:
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:UpdateItem
+        - dynamodb:GetItem
+      Resource:
+        - ${self:custom.TenantsTable.arn}
+  events:
+    - http:
+        method: patch
+        path: /tenants/{id}
