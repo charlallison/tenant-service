@@ -2,15 +2,14 @@ createTenant:
   handler: ./lambda/CreateTenant/index.main
   description: "Create new tenant"
   memorySize: 512
-  timeout: 15
-#  environment:
-  iamRoleStatementsInherit: true
+  timeout: 10 # API Gateway has a timeout of 30 seconds
+  environment:
   iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:PutItem
-      Resource:
-        - ${self:custom.TenantsTable.arn}
+  - Effect: Allow
+    Action:
+      - dynamodb:PutItem
+    Resource:
+      - ${self:custom.TenantsTable.arn}
   events:
     - http:
         method: post
