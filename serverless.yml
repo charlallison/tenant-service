@@ -1,0 +1,45 @@
+service: tenant-service
+
+frameworkVersion: "3"
+
+package:
+  individually: true
+  excludeDevDependencies: true
+
+provider:
+  name: aws
+  profile: serverless
+  region: us-east-1
+  logRetentionInDays: 5
+  memorySize: 128
+  apiName: tenant-service
+  timeout: 15
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  environment:
+    REGION: ${self:provider.region}
+    TENANT_TABLE_NAME: ${self:custom.TenantsTable.name}
+
+functions:
+  - ${file(./lambda/CreateTenant/config.yml)}
+#  - ${file(./lambda/PayRent/config.yml)}
+#  - ${file(./lambda/UpdateTenant/config.yml)}
+#  - ${file(./lambda/DeleteTenant/config.yml)}
+#  - ${file(./lambda/GetTenant/config.yml)}
+#  - ${file(./lambda/NotifyTenants/config.yml)}
+
+resources:
+  Resources:
+    TenantsTable: ${file(resources/TenantsTable.yml):TenantTable}
+
+plugins:
+  - serverless-esbuild
+
+custom:
+  TenantsTable:
+    name: !Ref TenantsTable
+    arn: !GetAtt TenantsTable.Arn
+  esbuild:
+    bundle: true
+    exclude:
+      - aws-sdk
