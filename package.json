@@ -6,7 +6,7 @@
   "main": "serverless.yml",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "commit": "git-cz"
+    "cm": "git-cz"
   },
   "engines": {
     "node": ">=14.15.0"
@@ -16,7 +16,9 @@
     "@aws-sdk/util-dynamodb": "^3.271.0",
     "@middy/core": "^3.4.0",
     "@middy/http-json-body-parser": "^3.4.0",
+    "cz-conventional-changelog-emoji": "^0.1.0",
     "http-errors": "^2.0.0",
+    "init": "^0.1.2",
     "luxon": "^3.2.1"
   },
   "devDependencies": {
@@ -25,7 +27,7 @@
     "@types/http-errors": "^2.0.1",
     "@types/luxon": "^3.2.0",
     "@types/node": "^14.14.25",
-    "cz-conventional-changelog-emoji": "^0.1.0",
+    "commitizen": "^4.3.0",
     "esbuild": "^0.14.11",
     "json-schema-to-ts": "^1.5.0",
     "serverless": "^3.0.0",
@@ -39,7 +41,7 @@
   "license": "MIT",
   "config": {
     "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog-emoji"
+      "path": "cz-conventional-changelog-emoji"
     }
   }
 }
