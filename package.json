@@ -17,15 +17,13 @@
     "@middy/core": "^3.4.0",
     "@middy/http-json-body-parser": "^3.4.0",
     "http-errors": "^2.0.0",
-    "joi": "^17.7.0"
-  },
-  "commitizen": {
-    "path": "cz-conventional-changelog-emoji"
+    "luxon": "^3.2.1"
   },
   "devDependencies": {
     "@serverless/typescript": "^3.0.0",
     "@types/aws-lambda": "^8.10.71",
     "@types/http-errors": "^2.0.1",
+    "@types/luxon": "^3.2.0",
     "@types/node": "^14.14.25",
     "cz-conventional-changelog-emoji": "^0.1.0",
     "esbuild": "^0.14.11",

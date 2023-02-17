@@ -1,33 +1,50 @@
-import type { ValidatedEventAPIGatewayProxyEvent } from "../../src/libs/api-gateway";
-import { formatJSONResponse } from "../../src/libs/api-gateway";
-import { middyfy } from "../../src/libs/lambda";
-import {DynamoDBClient, PutItemCommand} from "@aws-sdk/client-dynamodb";
+import type {ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
+import {formatJSONResponse} from "../../src/libs/api-gateway";
+import {middyfy} from "../../src/libs/lambda";
+import {DynamoDBClient, PutItemCommand, ReturnValue} from "@aws-sdk/client-dynamodb";
 import {marshall} from "@aws-sdk/util-dynamodb";
 import schema from "./schema";
 import {randomUUID} from "crypto";
+import {Payment, Tenant} from "../../src/libs/types";
+import {DateTime} from "luxon";
+import {InternalServerError} from "http-errors";
 
 const dynamoDBClient = new DynamoDBClient({
   region: process.env.REGION
 })
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-  // extract fields from body
-  const { name, phone } = event.body;
+  const { name, phone, propertyType, propertyCost, amountPaid } = event.body;
+  const date = DateTime.now();
 
-  const tenant = {
+  const tenant: Tenant = {
     id: randomUUID(),
     name,
-    phone
+    phone,
+    propertyCost,
+    propertyType,
+    payments: [{
+      amountPaid,
+      balance: (propertyCost - amountPaid),
+      year: date.year,
+      paidOn: date.toUnixInteger(),
+      validThrough: date.plus({ year: 1}).minus({day: 1}).toUnixInteger()
+    }]
   }
 
-  // save tenant to database
-  await dynamoDBClient.send(new PutItemCommand({
-    Item: marshall(tenant),
-    TableName: process.env.TENANT_TABLE_NAME
-  }));
+  try{
+    await dynamoDBClient.send(new PutItemCommand({
+      Item: marshall(tenant),
+      TableName: process.env.TENANT_TABLE_NAME,
+    }));
+  }catch (e) {
+    console.error(e);
+    throw new InternalServerError();
+  }
 
   return formatJSONResponse({
-    message: `Tenant created successfully`
+    message: `Tenant created successfully`,
+    tenant
   });
 };
 
