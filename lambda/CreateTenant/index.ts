@@ -1,11 +1,11 @@
 import type {ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
 import {formatJSONResponse} from "../../src/libs/api-gateway";
 import {middyfy} from "../../src/libs/lambda";
-import {DynamoDBClient, PutItemCommand, ReturnValue} from "@aws-sdk/client-dynamodb";
+import {DynamoDBClient, PutItemCommand} from "@aws-sdk/client-dynamodb";
 import {marshall} from "@aws-sdk/util-dynamodb";
 import schema from "./schema";
 import {randomUUID} from "crypto";
-import {Payment, Tenant} from "../../src/libs/types";
+import {Tenant} from "../../src/libs/types";
 import {DateTime} from "luxon";
 import {InternalServerError} from "http-errors";
 

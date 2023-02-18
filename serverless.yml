@@ -26,8 +26,8 @@ functions:
   - ${file(./lambda/ListTenants/config.yml)}
   - ${file(./lambda/DeleteTenant/config.yml)}
   - ${file(./lambda/GetTenant/config.yml)}
-#  - ${file(./lambda/NotifyTenants/config.yml)}
   - ${file(./lambda/PayRent/config.yml)}
+#  - ${file(./lambda/NotifyTenants/config.yml)}
 
 resources:
   Resources:

@@ -4,7 +4,7 @@ export type Payment = {
   amountPaid: number,
   paidOn: number,
   validThrough: number
-}
+};
 
 export type Tenant = {
   id: string,
@@ -12,11 +12,5 @@ export type Tenant = {
   phone: string,
   propertyCost: number,
   propertyType: string,
-  payments: [{
-    year: number,
-    balance: number,
-    amountPaid: number,
-    paidOn: number,
-    validThrough: number
-  }],
-}
+  payments: Payment[],
+};
