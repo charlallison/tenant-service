@@ -28,8 +28,8 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
       TableName: process.env.TENANT_TABLE_NAME,
       UpdateExpression: 'SET #name = :name, phone = :phone',
       ExpressionAttributeValues: {
-        ':name': marshall(name),
-        ':phone': marshall(phone)
+        ':name': { S: name }, //marshall(name),
+        ':phone': { S : phone } //marshall(phone)
       },
       ExpressionAttributeNames: {
         '#name': 'name'
