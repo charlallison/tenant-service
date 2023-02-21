@@ -8,6 +8,8 @@ TenantTable:
         AttributeType: S
       - AttributeName: phone
         AttributeType: S
+      - AttributeName: payments
+        AttributeType: L
     KeySchema:
       - AttributeName: id
         KeyType: HASH
@@ -15,6 +17,12 @@ TenantTable:
       - IndexName: phone
         KeySchema:
           - AttributeName: phone
+            KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+      - IndexName: payments
+        KeySchema:
+          - AttributeName: payments
             KeyType: HASH
         Projection:
           ProjectionType: ALL

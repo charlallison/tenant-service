@@ -23,12 +23,12 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
     phone,
     propertyCost,
     propertyType,
+    expiresOn: date.plus({ year: 1}).minus({day: 1}).toUnixInteger(),
     payments: [{
       amountPaid,
       balance: (propertyCost - amountPaid),
       year: date.year,
       paidOn: date.toUnixInteger(),
-      validThrough: date.plus({ year: 1}).minus({day: 1}).toUnixInteger()
     }]
   }
 
