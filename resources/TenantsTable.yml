@@ -6,23 +6,23 @@ TenantTable:
     AttributeDefinitions:
       - AttributeName: id
         AttributeType: S
-      - AttributeName: phone
+      - AttributeName: name
         AttributeType: S
-      - AttributeName: payments
-        AttributeType: L
+      - AttributeName: notifyOn
+        AttributeType: N
     KeySchema:
       - AttributeName: id
         KeyType: HASH
     GlobalSecondaryIndexes:
-      - IndexName: phone
+      - IndexName: IndexName
         KeySchema:
-          - AttributeName: phone
+          - AttributeName: name
             KeyType: HASH
         Projection:
           ProjectionType: ALL
-      - IndexName: payments
+      - IndexName: IndexNotifyOn
         KeySchema:
-          - AttributeName: payments
+          - AttributeName: notifyOn
             KeyType: HASH
         Projection:
           ProjectionType: ALL

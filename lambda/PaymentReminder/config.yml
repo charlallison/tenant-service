@@ -1,6 +1,6 @@
 paymentReminder:
   handler: ./lambda/PaymentReminder/index.main
-  description: A function that reminds tenants that their rents expire in the coming month
+  description: A function that runs on a schedule to notify tenants that their rents expire in the coming month
   memorySize: 512
   timeout: 10
   environment:
@@ -9,6 +9,6 @@ paymentReminder:
       Action:
         - dynamodb:Query
       Resource:
-        - ${self:custom.TenantsTable.arn}
-#  events:
-#    - schedule: (1 month)
+        - 'arn:aws:dynamodb:us-east-1:*:*'
+  events:
+    - schedule: cron(0 12 1W * ? *)

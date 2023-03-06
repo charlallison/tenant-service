@@ -1,41 +1,31 @@
-import {ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
+import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
 import schema from "./schema";
-import {DynamoDBClient, QueryCommand} from "@aws-sdk/client-dynamodb";
-import {DateTime} from "luxon";
+import {QueryCommand} from "@aws-sdk/client-dynamodb";
 import {InternalServerError} from "http-errors";
-import {marshall} from "@aws-sdk/util-dynamodb";
-import {AttributeValue} from "aws-lambda";
-
-const dynamodbClient = new DynamoDBClient({
-  region: process.env.REGION
-})
+import {DateTime} from "luxon";
+import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
+import {dynamoDBClient} from "../../src/libs/dynamodb-client";
 
 export const main: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-  const currentUnixStamp = DateTime.now().toUnixInteger();
-
+  const { year, month } = DateTime.now().plus({year: 1}).minus({ month: -2});
+  const notifyDate = DateTime.local(year, month).toUnixInteger();
 
   try {
-    await dynamodbClient.send(new QueryCommand({
+    const result = await dynamoDBClient.send(new QueryCommand({
       TableName: process.env.TENANT_TABLE_NAME,
-      IndexName: 'payments',
-      KeyConditionExpression: 'expiresOn - :currentDate <= :lower AND expiresOn - :upper >=',
+      IndexName: 'IndexNotifyOn',
+      KeyConditionExpression: 'notifyOn = :notifyOn',
       ExpressionAttributeValues: {
-        ':currentDate': {
-          'N': currentUnixStamp.toString()
-        },
-        ':lower': {
-          N: "2505600"
-        },
-        ':upper': {
-          N: '2678400'
-        }
+        ':notifyOn': marshall(notifyDate)
       }
     }));
+    const items = result.Items.map(item => unmarshall(item));
+
+    formatJSONResponse({
+      data: items
+    })
   }catch (e) {
     console.error(e);
     throw new InternalServerError();
   }
-
-
-
 }

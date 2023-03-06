@@ -3,6 +3,7 @@ export type Payment = {
   balance: number,
   amountPaid: number,
   paidOn: number,
+  expiresOn: number
 };
 
 export type Tenant = {
@@ -11,6 +12,6 @@ export type Tenant = {
   phone: string,
   propertyCost: number,
   propertyType: string,
-  expiresOn: number
   payments: Payment[],
+  notifyOn: number
 };
