@@ -1,17 +1,18 @@
 import type {ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
 import {formatJSONResponse} from "../../src/libs/api-gateway";
 import {middyfy} from "../../src/libs/lambda";
-import {DynamoDBClient, PutItemCommand} from "@aws-sdk/client-dynamodb";
+import {PutItemCommand} from "@aws-sdk/client-dynamodb";
 import {marshall} from "@aws-sdk/util-dynamodb";
 import schema from "./schema";
 import {randomUUID} from "crypto";
 import {Tenant} from "../../src/libs/types";
 import {DateTime} from "luxon";
 import {InternalServerError} from "http-errors";
+import {dynamoDBClient} from "../../src/libs/dynamodb-client";
 
-const dynamoDBClient = new DynamoDBClient({
-  region: process.env.REGION
-})
+// const dynamoDBClient = new DynamoDBClient({
+//   region: process.env.REGION
+// })
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { name, phone, propertyType, propertyCost, amountPaid } = event.body;
@@ -23,13 +24,14 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
     phone,
     propertyCost,
     propertyType,
-    expiresOn: date.plus({ year: 1}).minus({day: 1}).toUnixInteger(),
     payments: [{
       amountPaid,
       balance: (propertyCost - amountPaid),
       year: date.year,
       paidOn: date.toUnixInteger(),
-    }]
+      expiresOn: date.plus({ year: 1}).minus({month: 1}).toUnixInteger(),
+    }],
+    notifyOn: date.plus({year: 1}).minus({month: -2}).toUnixInteger()
   }
 
   try{

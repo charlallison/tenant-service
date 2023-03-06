@@ -1,13 +1,10 @@
-import {DynamoDBClient, GetItemCommand, UpdateItemCommand} from "@aws-sdk/client-dynamodb";
+import {GetItemCommand, UpdateItemCommand} from "@aws-sdk/client-dynamodb";
 import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
 import schema from "./schema";
 import {middyfy} from "../../src/libs/lambda";
 import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 import {NotFound, InternalServerError } from "http-errors";
-
-const dynamoDBClient = new DynamoDBClient({
-  region: process.env.REGION
-})
+import {dynamoDBClient} from "../../src/libs/dynamodb-client";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;

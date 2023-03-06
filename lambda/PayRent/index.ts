@@ -1,22 +1,19 @@
 import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
 import schema from "./schema";
-import {DynamoDBClient, GetItemCommand, UpdateItemCommand} from "@aws-sdk/client-dynamodb";
+import {GetItemCommand, UpdateItemCommand} from "@aws-sdk/client-dynamodb";
 import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 import {middyfy} from "../../src/libs/lambda";
 import {InternalServerError, NotFound} from "http-errors";
 import {Tenant} from "../../src/libs/types";
 import {DateTime} from "luxon";
-
-const dynamodbClient = new DynamoDBClient({
-  region: process.env.REGION
-})
+import {dynamoDBClient} from "../../src/libs/dynamodb-client";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const date = DateTime.now();
   const { id } = event.pathParameters;
   const { amount } = event.body;
 
-  const result = await dynamodbClient.send(new GetItemCommand({
+  const result = await dynamoDBClient.send(new GetItemCommand({
     TableName: process.env.TENANT_TABLE_NAME,
     Key: marshall({ id })
   }));
@@ -31,8 +28,6 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
     throw new InternalServerError(`Rent cannot be greater than annual recurring rent!`);
   }
 
-
-  // const payment = new Array<Payment>();
   const payment = {
     year: date.year,
     paidOn: date.toUnixInteger(),
@@ -42,7 +37,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   };
 
   try{
-    const result = await dynamodbClient.send(new UpdateItemCommand({
+    const result = await dynamoDBClient.send(new UpdateItemCommand({
       TableName: process.env.TENANT_TABLE_NAME,
       Key: marshall({ id }),
       UpdateExpression: 'SET #pmts = list_append(#pmts, :payment)',
@@ -58,7 +53,6 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
 
     return formatJSONResponse({
       message: `Rent has been paid`,
-      // tenant: unmarshall(result.Attributes)
     })
   }catch (e) {
     console.error(e);
