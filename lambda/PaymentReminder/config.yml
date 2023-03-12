@@ -9,6 +9,7 @@ paymentReminder:
       Action:
         - dynamodb:Query
       Resource:
-        - 'arn:aws:dynamodb:us-east-1:*:*'
+        - ${self:custom.TenantsTable.arn}
+        - '*'
   events:
     - schedule: cron(0 12 1W * ? *)

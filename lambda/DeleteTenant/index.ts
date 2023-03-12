@@ -4,7 +4,7 @@ import {middyfy} from "../../src/libs/lambda";
 import {InternalServerError, NotFound} from "http-errors";
 import {DeleteItemCommand, GetItemCommand} from "@aws-sdk/client-dynamodb";
 import {marshall} from "@aws-sdk/util-dynamodb";
-import {dynamoDBClient} from "../../src/libs/dynamodb-client";
+import {ddbClient} from "../../src/libs/dynamodb-client";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;
@@ -13,7 +13,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
     throw new InternalServerError();
   }
 
-  const result = await dynamoDBClient.send(new GetItemCommand({
+  const result = await ddbClient.send(new GetItemCommand({
     Key: marshall({ id }),
     TableName: process.env.TENANT_TABLE_NAME
   }))
@@ -22,7 +22,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
     throw new NotFound();
   }
 
-  await dynamoDBClient.send(new DeleteItemCommand({
+  await ddbClient.send(new DeleteItemCommand({
     Key: marshall({ id }),
     TableName: process.env.TENANT_TABLE_NAME,
   }));

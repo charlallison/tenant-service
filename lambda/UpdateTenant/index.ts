@@ -4,13 +4,13 @@ import schema from "./schema";
 import {middyfy} from "../../src/libs/lambda";
 import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 import {NotFound, InternalServerError } from "http-errors";
-import {dynamoDBClient} from "../../src/libs/dynamodb-client";
+import {ddbClient} from "../../src/libs/dynamodb-client";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;
   const { name, phone } = event.body;
 
-  const tenant = await dynamoDBClient.send(new GetItemCommand({
+  const tenant = await ddbClient.send(new GetItemCommand({
     Key: marshall({ id }),
     TableName: process.env.TENANT_TABLE_NAME,
   }));
@@ -20,13 +20,13 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   }
 
   try{
-    const item = await dynamoDBClient.send(new UpdateItemCommand({
+    const item = await ddbClient.send(new UpdateItemCommand({
       Key: marshall({ id }),
       TableName: process.env.TENANT_TABLE_NAME,
       UpdateExpression: 'SET #name = :name, phone = :phone',
       ExpressionAttributeValues: {
-        ':name': { S: name }, //marshall(name),
-        ':phone': { S : phone } //marshall(phone)
+        ':name': marshall(name),
+        ':phone': marshall(phone)
       },
       ExpressionAttributeNames: {
         '#name': 'name'

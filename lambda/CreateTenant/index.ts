@@ -8,11 +8,7 @@ import {randomUUID} from "crypto";
 import {Tenant} from "../../src/libs/types";
 import {DateTime} from "luxon";
 import {InternalServerError} from "http-errors";
-import {dynamoDBClient} from "../../src/libs/dynamodb-client";
-
-// const dynamoDBClient = new DynamoDBClient({
-//   region: process.env.REGION
-// })
+import {ddbClient} from "../../src/libs/dynamodb-client";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { name, phone, propertyType, propertyCost, amountPaid } = event.body;
@@ -35,7 +31,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   }
 
   try{
-    await dynamoDBClient.send(new PutItemCommand({
+    await ddbClient.send(new PutItemCommand({
       Item: marshall(tenant),
       TableName: process.env.TENANT_TABLE_NAME,
     }));

@@ -6,14 +6,14 @@ import {middyfy} from "../../src/libs/lambda";
 import {InternalServerError, NotFound} from "http-errors";
 import {Tenant} from "../../src/libs/types";
 import {DateTime} from "luxon";
-import {dynamoDBClient} from "../../src/libs/dynamodb-client";
+import {ddbClient} from "../../src/libs/dynamodb-client";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const date = DateTime.now();
   const { id } = event.pathParameters;
   const { amount } = event.body;
 
-  const result = await dynamoDBClient.send(new GetItemCommand({
+  const result = await ddbClient.send(new GetItemCommand({
     TableName: process.env.TENANT_TABLE_NAME,
     Key: marshall({ id })
   }));
@@ -37,7 +37,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   };
 
   try{
-    const result = await dynamoDBClient.send(new UpdateItemCommand({
+    const result = await ddbClient.send(new UpdateItemCommand({
       TableName: process.env.TENANT_TABLE_NAME,
       Key: marshall({ id }),
       UpdateExpression: 'SET #pmts = list_append(#pmts, :payment)',
