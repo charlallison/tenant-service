@@ -7,6 +7,7 @@ deleteTenant:
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - dynamodb:GetItem
         - dynamodb:DeleteItem
       Resource:
         - ${self:custom.TenantsTable.arn}
