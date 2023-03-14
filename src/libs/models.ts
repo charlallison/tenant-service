@@ -1,4 +1,4 @@
-export type Payment = {
+type Payment = {
   year: number,
   balance: number,
   amountPaid: number,
@@ -6,7 +6,7 @@ export type Payment = {
   expiresOn: number
 };
 
-export type Tenant = {
+type Tenant = {
   id: string,
   name: string,
   phone: string,
@@ -15,3 +15,5 @@ export type Tenant = {
   payments: Payment[],
   notifyOn: number
 };
+
+export { Payment, Tenant }

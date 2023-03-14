@@ -1,10 +1,10 @@
 import {GetItemCommand, UpdateItemCommand} from "@aws-sdk/client-dynamodb";
-import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
+import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
 import schema from "./schema";
-import {middyfy} from "../../src/libs/lambda";
+import {middyfy} from "@libs/lambda";
 import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 import {NotFound, InternalServerError } from "http-errors";
-import {ddbClient} from "../../src/libs/dynamodb-client";
+import {ddbClient} from "@libs/aws-client";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;
@@ -25,7 +25,9 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
       TableName: process.env.TENANT_TABLE_NAME,
       UpdateExpression: 'SET #name = :name, phone = :phone',
       ExpressionAttributeValues: {
+        // @ts-ignore
         ':name': marshall(name),
+        // @ts-ignore
         ':phone': marshall(phone)
       },
       ExpressionAttributeNames: {

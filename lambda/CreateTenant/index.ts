@@ -1,14 +1,14 @@
-import type {ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
-import {formatJSONResponse} from "../../src/libs/api-gateway";
-import {middyfy} from "../../src/libs/lambda";
+import type {ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
+import {formatJSONResponse} from "@libs/api-gateway";
+import {middyfy} from "@libs/lambda";
 import {PutItemCommand} from "@aws-sdk/client-dynamodb";
 import {marshall} from "@aws-sdk/util-dynamodb";
 import schema from "./schema";
 import {randomUUID} from "crypto";
-import {Tenant} from "../../src/libs/types";
+import {Tenant} from "@libs/models";
 import {DateTime} from "luxon";
 import {InternalServerError} from "http-errors";
-import {ddbClient} from "../../src/libs/dynamodb-client";
+import {ddbClient} from "@libs/aws-client";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { name, phone, propertyType, propertyCost, amountPaid } = event.body;

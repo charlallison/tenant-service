@@ -1,10 +1,10 @@
-import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
+import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
 import schema from "./schema";
-import {middyfy} from "../../src/libs/lambda";
+import {middyfy} from "@libs/lambda";
 import {InternalServerError, NotFound} from "http-errors";
 import {DeleteItemCommand, GetItemCommand} from "@aws-sdk/client-dynamodb";
 import {marshall} from "@aws-sdk/util-dynamodb";
-import {ddbClient} from "../../src/libs/dynamodb-client";
+import {ddbClient} from "@libs/aws-client";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;

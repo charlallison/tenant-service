@@ -1,10 +1,11 @@
-import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
-import {middyfy} from "../../src/libs/lambda";
+import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
+import {middyfy} from "@libs/lambda";
 import schema from "./schema";
 import {ScanCommand} from "@aws-sdk/client-dynamodb";
 import {unmarshall} from "@aws-sdk/util-dynamodb";
-import {ddbClient} from "../../src/libs/dynamodb-client";
+import {ddbClient} from "@libs/aws-client";
 
+// @ts-ignore
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const result = await ddbClient.send(new ScanCommand({
     TableName: process.env.TENANT_TABLE_NAME,

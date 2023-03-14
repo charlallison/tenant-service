@@ -1,12 +1,12 @@
-import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "../../src/libs/api-gateway";
+import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
 import schema from "./schema";
 import {GetItemCommand, UpdateItemCommand} from "@aws-sdk/client-dynamodb";
 import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
-import {middyfy} from "../../src/libs/lambda";
+import {middyfy} from "@libs/lambda";
 import {InternalServerError, NotFound} from "http-errors";
-import {Tenant} from "../../src/libs/types";
+import {Tenant} from "@libs/models";
 import {DateTime} from "luxon";
-import {ddbClient} from "../../src/libs/dynamodb-client";
+import {ddbClient} from "@libs/aws-client";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const date = DateTime.now();
@@ -37,7 +37,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   };
 
   try{
-    const result = await ddbClient.send(new UpdateItemCommand({
+    await ddbClient.send(new UpdateItemCommand({
       TableName: process.env.TENANT_TABLE_NAME,
       Key: marshall({ id }),
       UpdateExpression: 'SET #pmts = list_append(#pmts, :payment)',
@@ -47,9 +47,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
       ExpressionAttributeNames: {
         '#pmts': 'payments'
       }
-    }))
-
-    console.log(result);
+    }));
 
     return formatJSONResponse({
       message: `Rent has been paid`,

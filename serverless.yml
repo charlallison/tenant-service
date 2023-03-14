@@ -19,7 +19,6 @@ provider:
   environment:
     REGION: ${self:provider.region}
     TENANT_TABLE_NAME: ${self:custom.TenantsTable.name}
-    RENT_PAID_QUEUE: ${self:custom.TenantRentQueue.name}
 
 functions:
   - ${file(./lambda/CreateTenant/config.yml)}
@@ -32,24 +31,17 @@ functions:
 
 resources:
   Resources:
-    TenantsTable: ${file(./resources/TenantsTable.yml):TenantTable}
-    RentPaidQueue: ${file(./resources/rentQueue.yml):RentPaidQueue}
-  Outputs:
-    TenantsQueueArn: ${file(./resources/rentQueue.yml):Outputs.RentPaidQueueArn}
-    TenantsQueueUrl: ${file(./resources/rentQueue.yml):Outputs.RentPaidQueueUrl}
+    TenantsTable: ${file(./resource/TenantsTable.yml):TenantTable}
 
 plugins:
   - serverless-esbuild
   - serverless-iam-roles-per-function
 
 custom:
-  TenantRentQueue:
-    name: RentPaidQueue-${self:provider.stage}
-    arn: !GetAtt RentPaidQueue.Arn
-    url: !Ref RentPaidQueue
   TenantsTable:
     name: !Ref TenantsTable
     arn: !GetAtt TenantsTable.Arn
+
   esbuild:
     bundle: true
     exclude:

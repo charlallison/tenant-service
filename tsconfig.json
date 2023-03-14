@@ -10,7 +10,7 @@
     "target": "ES2020",
     "outDir": "lib"
   },
-  "include": ["src/**/*.ts", "serverless.yml"],
+  "include": ["src/**/*.ts", "serverless.yml", "lambda/**/*.ts"],
   "exclude": [
     "node_modules/**/*",
     ".serverless/**/*",
