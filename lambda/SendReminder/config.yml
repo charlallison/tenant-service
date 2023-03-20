@@ -1,13 +1,15 @@
-paymentReminder:
-  handler: ./lambda/PaymentReminder/index.main
-  description: A function that runs on a schedule to notify tenants that their rents expire in the coming month
+sendReminder:
+  handler: ./lambda/SendReminder/index.main
+  description: A function to notify tenants via SMS that their rent expire in the coming month.
   memorySize: 512
   timeout: 10
   environment:
+    SENDER_ID: 'LandLord'
   iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:Query
+        - sns:Publish
       Resource:
         - ${self:custom.TenantsTable.arn}
         - '*'

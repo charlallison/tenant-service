@@ -27,7 +27,7 @@ functions:
   - ${file(./lambda/DeleteTenant/config.yml)}
   - ${file(./lambda/GetTenant/config.yml)}
   - ${file(./lambda/PayRent/config.yml)}
-  - ${file(./lambda/PaymentReminder/config.yml)}
+  - ${file(./lambda/SendReminder/config.yml)}
 
 resources:
   Resources:
