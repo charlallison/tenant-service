@@ -14,7 +14,7 @@ TenantTable:
       - AttributeName: id
         KeyType: HASH
     StreamSpecification:
-      StreamViewType: NEW_IMAGE
+      StreamViewType: NEW_AND_OLD_IMAGES
     GlobalSecondaryIndexes:
       - IndexName: IndexName
         KeySchema:
