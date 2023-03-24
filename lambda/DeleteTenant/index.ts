@@ -35,7 +35,7 @@ const handler: ValidatedEventAPIGatewayProxyEventPathParameters<typeof schema> =
     });
   }catch (e) {
     console.error(e);
-    return formatJSONResponse({ message: ``}, 500)
+    return formatJSONResponse({ message: e.message}, 500)
   }
 }
 

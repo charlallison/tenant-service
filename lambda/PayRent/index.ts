@@ -25,7 +25,8 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   const tenant = unmarshall(result.Item) as Tenant;
 
   if(amount > tenant.propertyCost) {
-    throw new InternalServerError(`Rent cannot be greater than annual recurring rent!`);
+    const {message, statusCode} = new InternalServerError(`Rent cannot be greater than annual recurring rent!`);
+    return formatJSONResponse({ message }, statusCode);
   }
 
   const payment = {

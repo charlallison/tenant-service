@@ -1,7 +1,7 @@
 TenantTable:
   Type: AWS::DynamoDB::Table
   Properties:
-    TableName: Tenants-${self:provider.stage}
+    TableName: ${self:service}-${self:provider.stage}-TenantsTable
     BillingMode: PAY_PER_REQUEST
     AttributeDefinitions:
       - AttributeName: id

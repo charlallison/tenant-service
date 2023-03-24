@@ -28,6 +28,7 @@ functions:
   - ${file(./lambda/GetTenant/config.yml)}
   - ${file(./lambda/PayRent/config.yml)}
   - ${file(./lambda/SendReminder/config.yml)}
+  - ${file(./lambda/SendPaymentNotification/config.yml)}
 
 resources:
   Resources:
@@ -41,6 +42,8 @@ custom:
   TenantsTable:
     name: !Ref TenantsTable
     arn: !GetAtt TenantsTable.Arn
+  TenantsTableStream:
+    arn: !GetAtt [TenantsTable, StreamArn]
 
   esbuild:
     bundle: true
