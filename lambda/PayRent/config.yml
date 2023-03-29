@@ -10,7 +10,7 @@ payRent:
         - dynamodb:UpdateItem
         - dynamodb:GetItem
       Resource:
-        - ${self:custom.TenantsTable.arn}
+        - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
         method: put

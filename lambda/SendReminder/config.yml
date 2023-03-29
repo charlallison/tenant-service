@@ -11,7 +11,7 @@ sendReminder:
         - dynamodb:Query
         - sns:Publish
       Resource:
-        - ${self:custom.TenantsTable.arn}
+        - ${self:custom.PropertyServiceTable.arn}
         - '*'
   events:
     - schedule: cron(0 12 1W * ? *)

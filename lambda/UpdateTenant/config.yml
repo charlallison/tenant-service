@@ -1,4 +1,4 @@
-updateTenant:
+UpdateTenant:
   handler: ./lambda/UpdateTenant/index.main
   description: "Update Tenant"
   memorySize: 512
@@ -10,7 +10,7 @@ updateTenant:
         - dynamodb:UpdateItem
         - dynamodb:GetItem
       Resource:
-        - ${self:custom.TenantsTable.arn}
+        - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
         method: patch

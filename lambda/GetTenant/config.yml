@@ -1,4 +1,4 @@
-getTenants:
+GetTenants:
   handler: ./lambda/GetTenant/index.main
   description: "Get a tenant using the Id"
   memorySize: 512
@@ -9,7 +9,7 @@ getTenants:
       Action:
         - dynamodb:GetItem
       Resource:
-        - ${self:custom.TenantsTable.arn}
+        - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
         method: get

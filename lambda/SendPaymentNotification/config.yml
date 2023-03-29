@@ -1,0 +1,17 @@
+SendPaymentNotification:
+  handler: ./lambda/SendPaymentNotification/index.main
+  description: Sends payment confirmation notification to tenant after rent is paid
+  memorySize: 128
+  timeout: 10
+  environment:
+    SENDER_ID: LandLord
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource:
+        - '*'
+  events:
+    - stream:
+        type: dynamodb
+        arn: ${self:custom.PropertyServiceTableStream.arn}

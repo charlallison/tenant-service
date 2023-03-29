@@ -1,0 +1,17 @@
+CreateProperty:
+  handler: ./lambda/CreateProperty/index.main
+  description: Adds a new property
+  memorySize: 512
+  timeout: 10
+  environment:
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource:
+        - ${self:custom.TenantsTable.arn}
+      events:
+        - http:
+            method: POST
+            path: /properties

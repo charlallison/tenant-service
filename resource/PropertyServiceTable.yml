@@ -1,7 +1,7 @@
-TenantTable:
+PropertyServiceTable:
   Type: AWS::DynamoDB::Table
   Properties:
-    TableName: ${self:service}-${self:provider.stage}-TenantsTable
+    TableName: ${self:service}-${self:provider.stage}-Table
     BillingMode: PAY_PER_REQUEST
     AttributeDefinitions:
       - AttributeName: id
@@ -14,7 +14,7 @@ TenantTable:
       - AttributeName: id
         KeyType: HASH
     StreamSpecification:
-      StreamViewType: NEW_AND_OLD_IMAGES
+      StreamViewType: NEW_IMAGE
     GlobalSecondaryIndexes:
       - IndexName: IndexName
         KeySchema:

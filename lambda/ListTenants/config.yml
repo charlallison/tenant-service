@@ -1,4 +1,4 @@
-listTenants:
+ListTenants:
   handler: ./lambda/ListTenants/index.main
   description: "Fetches all the saved tenant"
   memorySize: 512
@@ -9,7 +9,7 @@ listTenants:
       Action:
         - dynamodb:Scan
       Resource:
-        - ${self:custom.TenantsTable.arn}
+        - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
         method: get

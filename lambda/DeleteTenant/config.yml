@@ -1,4 +1,4 @@
-deleteTenant:
+DeleteTenant:
   handler: ./lambda/DeleteTenant/index.main
   description: "Delete tenant by id"
   memorySize: 512
@@ -10,7 +10,7 @@ deleteTenant:
         - dynamodb:GetItem
         - dynamodb:DeleteItem
       Resource:
-        - ${self:custom.TenantsTable.arn}
+        - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
         method: delete
