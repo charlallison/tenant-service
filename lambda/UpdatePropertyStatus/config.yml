@@ -1,0 +1,22 @@
+UpdatePropertyStatus:
+  handler: ./lambda/UpdatePropertyStatus/index.main
+  description: Updates the status of a property as 'Available' or 'Not Available'
+  memorySize: 128
+  timeout: 10
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:UpdateItem
+      Resource:
+        - ${self:custom.PropertyServiceTable.arn}
+  events:
+    - stream:
+        type: dynamodb
+        arn: ${self:custom.PropertyServiceTableStream.arn}
+        filterPatterns:
+          - eventName: [INSERT]
+            dynamodb:
+              NewImage:
+                Type:
+                  S: [Tenant]
+
