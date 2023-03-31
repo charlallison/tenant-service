@@ -8,7 +8,8 @@ export class Property {
   description: string;
   cost: number;
   rooms: number;
-  status: string = `available`;
+  status: string = `Available`;
+  readonly Type = Property.name;
 
   static From(data: Partial<Property>): Property {
     const property = new Property();

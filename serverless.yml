@@ -32,6 +32,8 @@ functions:
 #  - ${file(./lambda/PayRent/config.yml)}
 #  - ${file(./lambda/SendReminder/config.yml)}
 #  - ${file(./lambda/SendPaymentNotification/config.yml)}
+  - ${file(./lambda/CreateProperty/config.yml)}
+  - ${file(./lambda/UpdatePropertyStatus/config.yml)}
 
 resources:
   Resources:
