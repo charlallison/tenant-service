@@ -1,0 +1,15 @@
+ListProperties:
+  handler: ./lambda/ListProperties/index.main
+  description: List properties based on status
+  memorySize: 512
+  timeout: 10
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+      Resource:
+        - "arn:aws:dynamodb:*:*:*"
+  events:
+    - http:
+        method: GET
+        path: /properties

@@ -6,7 +6,7 @@ PropertyServiceTable:
     AttributeDefinitions:
       - AttributeName: id
         AttributeType: S
-      - AttributeName: name
+      - AttributeName: status
         AttributeType: S
       - AttributeName: notifyOn
         AttributeType: N
@@ -16,9 +16,9 @@ PropertyServiceTable:
     StreamSpecification:
       StreamViewType: NEW_IMAGE
     GlobalSecondaryIndexes:
-      - IndexName: IndexName
+      - IndexName: PropertyStatus
         KeySchema:
-          - AttributeName: name
+          - AttributeName: status
             KeyType: HASH
         Projection:
           ProjectionType: ALL

@@ -34,6 +34,7 @@ functions:
 #  - ${file(./lambda/SendPaymentNotification/config.yml)}
   - ${file(./lambda/CreateProperty/config.yml)}
   - ${file(./lambda/UpdatePropertyStatus/config.yml)}
+  - ${file(./lambda/ListProperties/config.yml)}
 
 resources:
   Resources:
