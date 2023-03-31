@@ -1,0 +1,9 @@
+{
+  "body": {
+    "cost": 2000,
+    "description": "Property description",
+    "rooms": 4,
+    "title": "Property Titlee"
+  },
+  "Content-Type": "application/json"
+}

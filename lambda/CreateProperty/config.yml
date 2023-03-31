@@ -10,8 +10,8 @@ CreateProperty:
         - dynamodb:GetItem
         - dynamodb:PutItem
       Resource:
-        - ${self:custom.TenantsTable.arn}
-      events:
-        - http:
-            method: POST
-            path: /properties
+        - ${self:custom.PropertyServiceTable.arn}
+  events:
+    - http:
+        method: POST
+        path: /properties
