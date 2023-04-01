@@ -1,0 +1,15 @@
+GetProperty:
+  handler: ./lambda/GetProperty/index.main
+  description: Get property based on its Id
+  memorySize: 512
+  timeout: 10
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+      Resource:
+        - ${self:custom.PropertyServiceTable.arn}
+  events:
+    - http:
+        method: GET
+        path: /properties/{id}

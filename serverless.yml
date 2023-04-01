@@ -36,6 +36,7 @@ functions:
   - ${file(./lambda/UpdatePropertyStatus/config.yml)}
   - ${file(./lambda/ListProperties/config.yml)}
   - ${file(./lambda/UpdateProperty/config.yml)}
+  - ${file(./lambda/GetProperty/config.yml)}
 
 resources:
   Resources:
