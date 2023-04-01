@@ -1,0 +1,15 @@
+UpdateProperty:
+  handler: ./lambda/UpdateProperty/index.main
+  description: Update property
+  memorySize: 512
+  timeout: 10
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:UpdateItem
+      Resource:
+        - "arn:aws:dynamodb:*:*:*"
+  events:
+    - http:
+        method: PUT
+        path: /properties/{id}
