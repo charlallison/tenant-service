@@ -5,13 +5,15 @@ import {ddbClient} from "@libs/aws-client";
 import {GetItemCommand} from "@aws-sdk/client-dynamodb";
 import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 import {NotFound} from "http-errors";
+import {Property} from "@models/property";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;
 
   const response = await ddbClient.send(new GetItemCommand({
     TableName: process.env.TENANT_TABLE_NAME,
-    Key: marshall({id})
+    // @ts-ignore
+    Key: marshall(Property.BuildKeys(id))
   }));
 
   if (!response.Item) {
@@ -20,7 +22,6 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   }
 
   return formatJSONResponse({
-    message: `Property found`,
     property: unmarshall(response.Item)
   })
 }

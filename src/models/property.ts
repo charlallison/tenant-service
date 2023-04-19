@@ -4,31 +4,31 @@ export class Property {
   id: string;
   pk: string;
   sk: string
-  title: string;
-  description: string;
+  city: string;
+  state: string;
+  address: string;
   cost: number;
   rooms: number;
   status: string = `Available`;
   readonly Type = Property.name;
 
-  static From(data: Partial<Property>): Property {
-    const property = new Property();
-    property.id = data.id ?? v4();
+  constructor(data: Pick<Property, 'city' | 'address' | 'cost' | 'rooms' | 'state'>) {
+    this.id = v4();
+    this.city = data.city;
+    this.address = data.address;
+    this.cost = data.cost;
+    this.rooms = data.rooms;
+    this.state = data.state;
 
-    property.title = data.title;
-    property.description = data.description;
-    property.cost = data.cost;
-    property.rooms = data.rooms;
-
-    property.keys();
-
-    return property;
+    const { pk, sk } = Property.BuildKeys(this.id);
+    this.pk = pk;
+    this.sk = sk;
   }
 
-  private constructor(){}
-
-  private keys() {
-    this.pk = `property#id=${this.id}`;
-    this.sk = `property#title=${this.title}#rooms=${this.rooms}`;
+  static BuildKeys(id: string) {
+    return {
+      pk: `property#${id}`,
+      sk: `property#${id}`
+    }
   }
 }

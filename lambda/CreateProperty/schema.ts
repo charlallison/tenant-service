@@ -4,12 +4,13 @@ export default {
   properties: {
     body: {
       type: 'object',
-      required: ['description', 'cost', 'rooms', 'title'],
+      required: ['address', 'cost', 'rooms', 'city', 'state'],
       properties: {
-        description : { type: 'string'},
+        address : { type: 'string'},
         cost: { type: 'integer'},
         rooms: { type: 'integer'},
-        title: { type: 'string'}
+        city: { type: 'string'},
+        state: { type: 'string'}
       }
     }
   }

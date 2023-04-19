@@ -4,7 +4,7 @@ export default {
   properties: {
     pathParameters: {
       type: 'object',
-      required: ['id'],
+      required: ["id"],
       properties: {
         id: { type: 'string'}
       }
