@@ -13,6 +13,8 @@ provider:
   logRetentionInDays: 5
   memorySize: 128
   apiName: ${self:service}
+  apiGateway:
+    shouldStartNameWithService: true
   timeout: 15
   runtime: nodejs18.x
   stage: ${opt:stage, 'dev'}
@@ -28,14 +30,14 @@ functions:
 #  - ${file(./lambda/UpdateTenant/config.yml)}
 #  - ${file(./lambda/ListTenants/config.yml)}
 #  - ${file(./lambda/DeleteTenant/config.yml)}
-#  - ${file(./lambda/GetTenant/config.yml)}
-#  - ${file(./lambda/PayRent/config.yml)}
+  - ${file(./lambda/GetTenant/config.yml)}
+  - ${file(./lambda/PayRent/config.yml)}
 #  - ${file(./lambda/SendReminder/config.yml)}
 #  - ${file(./lambda/SendPaymentNotification/config.yml)}
   - ${file(./lambda/CreateProperty/config.yml)}
-  - ${file(./lambda/UpdatePropertyStatus/config.yml)}
-  - ${file(./lambda/ListProperties/config.yml)}
-  - ${file(./lambda/UpdateProperty/config.yml)}
+#  - ${file(./lambda/UpdatePropertyStatus/config.yml)}
+#  - ${file(./lambda/ListProperties/config.yml)}
+#  - ${file(./lambda/UpdateProperty/config.yml)}
   - ${file(./lambda/GetProperty/config.yml)}
 
 resources:
