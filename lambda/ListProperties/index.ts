@@ -1,6 +1,5 @@
 import {
-  formatJSONResponse,
-  ValidatedEventAPIGatewayProxyEventQueryParameters
+  formatJSONResponse, ValidatedEventAPIGatewayProxyEvent
 } from "@libs/api-gateway";
 import schema from "./schema";
 import {middyfy} from "@libs/lambda";
@@ -8,7 +7,7 @@ import {ddbClient} from "@libs/aws-client";
 import {QueryCommand} from "@aws-sdk/client-dynamodb";
 import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 
-const handler:ValidatedEventAPIGatewayProxyEventQueryParameters<typeof schema> = async (event) => {
+const handler:ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { status } = event.queryStringParameters;
 
   const result = await ddbClient.send(new QueryCommand({
@@ -22,7 +21,7 @@ const handler:ValidatedEventAPIGatewayProxyEventQueryParameters<typeof schema> =
     ExpressionAttributeNames: {
       '#status': 'status'
     },
-    ProjectionExpression: `id, title, description`
+    ProjectionExpression: `id, city, address`
   }));
 
   if(result.Items.length == 0) {

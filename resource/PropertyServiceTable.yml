@@ -4,15 +4,17 @@ PropertyServiceTable:
     TableName: ${self:service}-${self:provider.stage}-Table
     BillingMode: PAY_PER_REQUEST
     AttributeDefinitions:
-      - AttributeName: id
+      - AttributeName: pk
+        AttributeType: S
+      - AttributeName: sk
         AttributeType: S
       - AttributeName: status
         AttributeType: S
-      - AttributeName: notifyOn
-        AttributeType: N
     KeySchema:
-      - AttributeName: id
+      - AttributeName: pk
         KeyType: HASH
+      - AttributeName: sk
+        KeyType: RANGE
     StreamSpecification:
       StreamViewType: NEW_IMAGE
     GlobalSecondaryIndexes:
@@ -22,9 +24,9 @@ PropertyServiceTable:
             KeyType: HASH
         Projection:
           ProjectionType: ALL
-      - IndexName: IndexNotifyOn
-        KeySchema:
-          - AttributeName: notifyOn
-            KeyType: HASH
-        Projection:
-          ProjectionType: ALL
+#      - IndexName: IndexNotifyOn
+#        KeySchema:
+#          - AttributeName: notifyOn
+#            KeyType: HASH
+#        Projection:
+#          ProjectionType: ALL
