@@ -5,11 +5,12 @@ CreateTenant:
   timeout: 10 # API Gateway has a timeout of 30 seconds
   environment:
   iamRoleStatements:
-  - Effect: Allow
-    Action:
-      - dynamodb:PutItem
-    Resource:
-      - ${self:custom.PropertyServiceTable.arn}
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource:
+        - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
         method: post

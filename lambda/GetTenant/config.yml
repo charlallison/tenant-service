@@ -1,4 +1,4 @@
-GetTenants:
+GetTenant:
   handler: ./lambda/GetTenant/index.main
   description: "Get a tenant using the Id"
   memorySize: 512
@@ -12,5 +12,5 @@ GetTenants:
         - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
-        method: get
-        path: /tenants/{id}
+        method: GET
+        path: /tenants/{id}/{email}
