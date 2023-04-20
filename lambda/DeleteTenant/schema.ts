@@ -1,7 +1,14 @@
 export default {
   type: 'object',
+  required: ['queryStringParameters'],
   properties: {
-    id: { type: 'string'}
-  },
-  required: ['id']
+    queryStringParameters: {
+      type: 'object',
+      required: ['id', 'email'],
+      properties: {
+        id: { type: 'string'},
+        email: { type: 'string'}
+      }
+    }
+  }
 } as const

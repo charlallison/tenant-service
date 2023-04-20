@@ -1,42 +1,38 @@
 import {
-  formatJSONResponse,
-  ValidatedEventAPIGatewayProxyEventPathParameters
+  formatJSONResponse, ValidatedEventAPIGatewayProxyEvent
 } from "@libs/api-gateway";
 import schema from "./schema";
 import {middyfy} from "@libs/lambda";
-import {NotFound} from "http-errors";
 import {DeleteItemCommand, GetItemCommand} from "@aws-sdk/client-dynamodb";
 import {marshall} from "@aws-sdk/util-dynamodb";
 import {ddbClient} from "@libs/aws-client";
-import * as console from "console";
+import {Tenant} from "@models/tenant";
+import {NotFound} from "http-errors";
 
-const handler: ValidatedEventAPIGatewayProxyEventPathParameters<typeof schema> = async (event) => {
-  const { id } = event.pathParameters;
+const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+  const { id, email } = event.queryStringParameters;
+  // @ts-ignore
+  const pk = Tenant.BuildKeys(id, email);
 
-  try {
-    const result = await ddbClient.send(new GetItemCommand({
-      Key: marshall({ id }),
-      TableName: process.env.TENANT_TABLE_NAME
-    }));
+  const result = await ddbClient.send(new GetItemCommand({
+    Key: marshall(pk),
+    TableName: process.env.TENANT_TABLE_NAME
+  }));
 
-    if(!result.Item) {
-      const { message, statusCode } = new NotFound(`Tenant not found, please try again.`);
-      console.error(message, id);
-      return formatJSONResponse({ message }, statusCode);
-    }
-
-    await ddbClient.send(new DeleteItemCommand({
-      Key: marshall({ id }),
-      TableName: process.env.TENANT_TABLE_NAME,
-    }));
-
-    return formatJSONResponse({
-      message: `Tenant deleted successfully`
-    });
-  }catch (e) {
-    console.error(e);
-    return formatJSONResponse({ message: e.message}, 500)
+  if(!result.Item) {
+    const { message, statusCode } = new NotFound(`Tenant not found.`);
+    return formatJSONResponse({ message }, statusCode);
   }
+
+  await ddbClient.send(new DeleteItemCommand({
+    // @ts-ignore
+    Key: marshall(pk),
+    TableName: process.env.TENANT_TABLE_NAME,
+  }));
+
+  return formatJSONResponse({
+    message: `Tenant deleted`
+  });
 }
 
-export const main = middyfy(handler);
+export const main = middyfy(handler, schema);
