@@ -1,15 +1,15 @@
 ListTenants:
   handler: ./lambda/ListTenants/index.main
-  description: "Fetches all the saved tenant"
+  description: "Fetches all the saved tenant based on their status"
   memorySize: 512
-  timeout: 10 # API Gateway has a timeout of 30 seconds
+  timeout: 10
   environment:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:Scan
+        - dynamodb:Query
       Resource:
-        - ${self:custom.PropertyServiceTable.arn}
+        - "arn:aws:dynamodb:*:*:*"
   events:
     - http:
         method: get

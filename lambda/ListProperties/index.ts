@@ -12,7 +12,7 @@ const handler:ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) 
 
   const result = await ddbClient.send(new QueryCommand({
     TableName: process.env.TENANT_TABLE_NAME,
-    IndexName: 'PropertyStatus',
+    IndexName: 'StatusIndex',
     KeyConditionExpression: '#status = :status',
     ExpressionAttributeValues: {
       // @ts-ignore
