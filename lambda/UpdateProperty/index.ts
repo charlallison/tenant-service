@@ -1,30 +1,31 @@
-import {formatJSONResponse, ValidatedEventAPIGatewayProxyBD} from "@libs/api-gateway";
+import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
 import schema from "./schema";
 import {middyfy} from "@libs/lambda";
 import {ddbClient} from "@libs/aws-client";
-import {UpdateItemCommand} from "@aws-sdk/client-dynamodb";
-import {marshall} from "@aws-sdk/util-dynamodb";
-import * as console from "console";
+import {ReturnValue, UpdateItemCommand} from "@aws-sdk/client-dynamodb";
+import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
+import {Property} from "@models/property";
 
-const handler: ValidatedEventAPIGatewayProxyBD<typeof schema> = async (event) => {
+const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;
-  const { title, description } = event.body;
-  console.log(title, description, id);
+  const { cost, rooms } = event.body;
 
-  await ddbClient.send(new UpdateItemCommand({
+  const response = await ddbClient.send(new UpdateItemCommand({
     TableName: process.env.TENANT_TABLE_NAME,
-    Key: marshall({id}),
-    UpdateExpression: `SET title = :title, description = :description`,
+    Key: marshall(Property.BuildKeys(id)),
+    UpdateExpression: `SET cost = :cost, rooms = :rooms`,
     ExpressionAttributeValues: {
       // @ts-ignore
-      ':title': marshall(title),
+      ':cost': marshall(cost),
       // @ts-ignore
-      ':description': marshall(description)
+      ':rooms': marshall(rooms)
     },
+    ReturnValues: ReturnValue.ALL_NEW
   }));
 
   return formatJSONResponse({
-    message: `Property updated successfully`
+    message: `Property updated successfully`,
+    property: unmarshall(response.Attributes)
   });
 
 }

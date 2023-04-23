@@ -1,6 +1,6 @@
 DeleteTenant:
   handler: ./lambda/DeleteTenant/index.main
-  description: "Delete tenant by id"
+  description: "Delete tenant by id and email address"
   memorySize: 512
   timeout: 10 # API Gateway has a timeout of 30 seconds
   environment:

@@ -1,20 +1,13 @@
 export default {
   type: 'object',
-  required: ['body', 'pathParameters'],
+  required: ['body'],
   properties: {
     body: {
       type: 'object',
-      required: ['title', 'description'],
+      required: ['cost', 'rooms'],
       properties: {
-        title: { type: 'string'},
-        description: { type: 'string'}
-      }
-    },
-    pathParameters: {
-      type: 'object',
-      required: ['id'],
-      properties: {
-        id: { type: 'string'}
+        cost: { type: 'number'},
+        rooms: { type: 'number'}
       }
     }
   }

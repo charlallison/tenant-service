@@ -1,4 +1,4 @@
-payRent:
+PayRent:
   handler: ./lambda/PayRent/index.main
   description: "Pay rent"
   memorySize: 512
@@ -7,11 +7,11 @@ payRent:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:UpdateItem
         - dynamodb:GetItem
+        - dynamodb:PutItem
       Resource:
         - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
-        method: put
+        method: post
         path: /tenants/{id}/pay

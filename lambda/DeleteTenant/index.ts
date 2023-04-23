@@ -10,9 +10,9 @@ import {Tenant} from "@models/tenant";
 import {NotFound} from "http-errors";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-  const { id, email } = event.queryStringParameters;
+  const { id } = event.pathParameters;
   // @ts-ignore
-  const pk = Tenant.BuildKeys(id, email);
+  const pk = Tenant.BuildKeys(id);
 
   const result = await ddbClient.send(new GetItemCommand({
     Key: marshall(pk),

@@ -13,4 +13,4 @@ GetTenant:
   events:
     - http:
         method: GET
-        path: /tenants/{id}/{email}
+        path: /tenants/{id}

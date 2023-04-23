@@ -27,8 +27,8 @@ export class Property {
 
   static BuildKeys(id: string) {
     return {
-      pk: `property#${id}`,
-      sk: `property#${id}`
+      pk: `property#id=${id}`,
+      sk: `property#id=${id}`
     }
   }
 }

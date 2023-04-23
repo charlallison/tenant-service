@@ -13,5 +13,5 @@ UpdateTenant:
         - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
-        method: patch
+        method: put
         path: /tenants/{id}

@@ -3,47 +3,42 @@ import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-
 import schema from "./schema";
 import {middyfy} from "@libs/lambda";
 import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
-import {NotFound, InternalServerError } from "http-errors";
+import {NotFound} from "http-errors";
 import {ddbClient} from "@libs/aws-client";
+import {Tenant} from "@models/tenant";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;
-  const { name, phone } = event.body;
+  const { name} = event.body;
 
   const tenant = await ddbClient.send(new GetItemCommand({
-    Key: marshall({ id }),
+    Key: marshall(Tenant.BuildKeys(id)),
     TableName: process.env.TENANT_TABLE_NAME,
   }));
 
-  if (tenant.Item === undefined) {
-    throw new NotFound(`Tenant not found!`);
+  if (!tenant.Item) {
+    const {message, statusCode } = new NotFound(`Tenant not found`);
+    return formatJSONResponse({message}, statusCode)
   }
 
-  try{
-    const item = await ddbClient.send(new UpdateItemCommand({
-      Key: marshall({ id }),
-      TableName: process.env.TENANT_TABLE_NAME,
-      UpdateExpression: 'SET #name = :name, phone = :phone',
-      ExpressionAttributeValues: {
-        // @ts-ignore
-        ':name': marshall(name),
-        // @ts-ignore
-        ':phone': marshall(phone)
-      },
-      ExpressionAttributeNames: {
-        '#name': 'name'
-      },
-      ReturnValues: 'ALL_NEW',
-    }));
+  const item = await ddbClient.send(new UpdateItemCommand({
+    Key: marshall(Tenant.BuildKeys(id)),
+    TableName: process.env.TENANT_TABLE_NAME,
+    UpdateExpression: 'SET #name = :name',
+    ExpressionAttributeValues: {
+      // @ts-ignore
+      ':name': marshall(name),
+    },
+    ExpressionAttributeNames: {
+      '#name': 'name'
+    },
+    ReturnValues: 'ALL_NEW',
+  }));
 
-    return formatJSONResponse({
-      message: `Tenant updated!`,
-      tenant: unmarshall(item.Attributes)
-    });
-  }catch (e) {
-    console.error(e);
-    throw new InternalServerError();
-  }
+  return formatJSONResponse({
+    message: `Tenant updated!`,
+    tenant: unmarshall(item.Attributes)
+  });
 };
 
-export const main = middyfy(handler);
+export const main = middyfy(handler, schema);

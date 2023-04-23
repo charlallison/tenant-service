@@ -8,11 +8,11 @@ import {ddbClient} from "@libs/aws-client";
 import {Tenant} from "@models/tenant";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-  const { id, email } = event.pathParameters;
+  const { id} = event.pathParameters;
 
   const result = await ddbClient.send(new GetItemCommand({
     // @ts-ignore
-    Key: marshall(Tenant.BuildKeys(id, email)),
+    Key: marshall(Tenant.BuildKeys(id)),
     TableName: process.env.TENANT_TABLE_NAME,
     ConsistentRead: true
   }))
