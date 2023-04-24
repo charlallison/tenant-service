@@ -1,23 +1,22 @@
 import {DynamoDBStreamEvent} from "aws-lambda";
 import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
-import {Tenant} from "@models/tenant";
+import {Payment} from "@models/payment";
+import {Property, PropertyStatus} from "@models/property";
 import {ddbClient} from "@libs/aws-client";
 import {UpdateItemCommand} from "@aws-sdk/client-dynamodb";
 
 export const main = async (event: DynamoDBStreamEvent) => {
   const {NewImage} = event.Records[0].dynamodb;
-
   // @ts-ignore
-  const tenant: Tenant = unmarshall(NewImage);
-  const { propertyId } = tenant.rent[0];
+  const payment = unmarshall(NewImage) as Payment;
 
   await ddbClient.send(new UpdateItemCommand({
-    Key: marshall({id: propertyId}),
+    Key: marshall(Property.BuildKeys(payment.propertyId)),
     TableName: process.env.TENANT_TABLE_NAME,
     UpdateExpression: 'SET #status = :status',
     ExpressionAttributeValues: {
       // @ts-ignore
-      ':status': marshall(`Not Available`)
+      ':status': marshall(PropertyStatus.NotAvailable)
     },
     ExpressionAttributeNames: {
       '#status': 'status',

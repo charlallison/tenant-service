@@ -1,6 +1,6 @@
 UpdatePropertyStatus:
   handler: ./lambda/UpdatePropertyStatus/index.main
-  description: Updates the status of a property as 'Available' or 'Not Available'
+  description: Updates the status of a property after a successful payment
   memorySize: 128
   timeout: 10
   iamRoleStatements:
@@ -18,5 +18,5 @@ UpdatePropertyStatus:
             dynamodb:
               NewImage:
                 Type:
-                  S: [Tenant]
+                  S: [Payment]
 

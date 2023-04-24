@@ -1,27 +1,33 @@
 import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
 import schema from "./schema";
 import {GetItemCommand, PutItemCommand} from "@aws-sdk/client-dynamodb";
-import {marshall} from "@aws-sdk/util-dynamodb";
+import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 import {middyfy} from "@libs/lambda";
-import {InternalServerError} from "http-errors";
+import {BadRequest, InternalServerError} from "http-errors";
 import {ddbClient} from "@libs/aws-client";
 import {Payment} from "@models/payment";
-import {Tenant} from "@models/tenant";
-import {Property} from "@models/property";
+import {TenantStatus, Tenant} from "@models/tenant";
+import {Property, PropertyStatus} from "@models/property";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters
   const { amount, propertyId } = event.body;
 
   // @ts-ignore
-  let item = await verifyTenant(id);
-  if(!item) {
+  const tenant = unmarshall(await findTenant(id)) as Tenant;
+
+  if(!tenant || tenant.status !== TenantStatus.Active) {
     return formatJSONResponse({message: `Tenant not found`}, 404);
   }
   // @ts-ignore
-  item = await verifyProperty(propertyId);
-  if(!item) {
-    return formatJSONResponse({message: `Property not found`}, 404);
+  const property = unmarshall(await findProperty(propertyId)) as Property;
+  if(!property || property.status !== PropertyStatus.Available) {
+    return formatJSONResponse({message: `Property not available`}, 404);
+  }
+
+  if(property.cost != amount) {
+    const { message, statusCode } = new BadRequest(`Invalid amount: ${amount}`);
+    return formatJSONResponse({message}, statusCode);
   }
 
   // @ts-ignore
@@ -43,7 +49,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
 }
 
 
-const verifyTenant = async (tenantId: string) => {
+const findTenant = async (tenantId: string) => {
   const response = await ddbClient.send(new GetItemCommand({
     TableName: process.env.TENANT_TABLE_NAME,
     Key: marshall(Tenant.BuildKeys(tenantId))
@@ -52,7 +58,7 @@ const verifyTenant = async (tenantId: string) => {
   return response.Item;
 }
 
-const verifyProperty = async (propertyId: string) => {
+const findProperty = async (propertyId: string) => {
   const response = await ddbClient.send(new GetItemCommand({
     TableName: process.env.TENANT_TABLE_NAME,
     Key: marshall(Property.BuildKeys(propertyId))

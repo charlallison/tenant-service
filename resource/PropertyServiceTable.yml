@@ -18,7 +18,7 @@ PropertyServiceTable:
     StreamSpecification:
       StreamViewType: NEW_IMAGE
     GlobalSecondaryIndexes:
-      - IndexName: PropertyStatus
+      - IndexName: StatusIndex
         KeySchema:
           - AttributeName: status
             KeyType: HASH

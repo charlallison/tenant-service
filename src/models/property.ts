@@ -1,5 +1,10 @@
 import {v4} from "uuid";
 
+export enum PropertyStatus {
+  Available  = "Available",
+  NotAvailable = "Not Available"
+}
+
 export class Property {
   id: string;
   pk: string;
@@ -9,7 +14,7 @@ export class Property {
   address: string;
   cost: number;
   rooms: number;
-  status: string = `Available`;
+  status: PropertyStatus = PropertyStatus.Available;
   readonly Type = Property.name;
 
   constructor(data: Pick<Property, 'city' | 'address' | 'cost' | 'rooms' | 'state'>) {

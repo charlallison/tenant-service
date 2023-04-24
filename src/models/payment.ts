@@ -31,7 +31,7 @@ export class Payment {
   static formatKey(tenantId: string, date: number) {
     return {
       pk: `tenant#id=${tenantId}`,
-      sk: `payment#${date}`
+      sk: `payment#date=${date}`
     }
   }
 }
