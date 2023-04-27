@@ -7,8 +7,7 @@ DeleteTenant:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:GetItem
-        - dynamodb:DeleteItem
+        - dynamodb:UpdateItem
       Resource:
         - ${self:custom.PropertyServiceTable.arn}
   events:

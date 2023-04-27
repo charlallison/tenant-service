@@ -1,6 +1,6 @@
-UpdatePropertyStatus:
-  handler: ./lambda/UpdatePropertyStatus/index.main
-  description: Updates the status of a property after a successful payment
+UpdateTenantOnPayment:
+  handler: ./lambda/UpdateTenantOnPayment/index.main
+  description: Update the notification date for the tenant
   memorySize: 128
   timeout: 10
   iamRoleStatements:

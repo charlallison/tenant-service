@@ -1,13 +1,12 @@
 export default {
   type: 'object',
-  required: ['queryStringParameters'],
+  required: ['pathParameters'],
   properties: {
-    queryStringParameters: {
+    pathParameters: {
       type: 'object',
-      required: ['id', 'email'],
+      required: ['id'],
       properties: {
-        id: { type: 'string'},
-        email: { type: 'string'}
+        id: { type: 'string'}
       }
     }
   }

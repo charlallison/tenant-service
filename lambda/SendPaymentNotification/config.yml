@@ -8,6 +8,7 @@ SendPaymentNotification:
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - dynamodb:GetItem
         - sns:Publish
       Resource:
         - '*'
@@ -15,3 +16,9 @@ SendPaymentNotification:
     - stream:
         type: dynamodb
         arn: ${self:custom.PropertyServiceTableStream.arn}
+        filterPatterns:
+          - eventName: [INSERT]
+            dynamodb:
+              NewImage:
+                Type:
+                  S: [Payment]

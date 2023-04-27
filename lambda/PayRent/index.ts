@@ -12,17 +12,15 @@ import {Property, PropertyStatus} from "@models/property";
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters
   const { amount, propertyId } = event.body;
-
   // @ts-ignore
   const tenant = unmarshall(await findTenant(id)) as Tenant;
-
-  if(!tenant || tenant.status !== TenantStatus.Active) {
-    return formatJSONResponse({message: `Tenant not found`}, 404);
+  if(!tenant || tenant.status !== TenantStatus.NotActive) {
+    return formatJSONResponse({message: `Payment not successful`}, 404);
   }
   // @ts-ignore
   const property = unmarshall(await findProperty(propertyId)) as Property;
   if(!property || property.status !== PropertyStatus.Available) {
-    return formatJSONResponse({message: `Property not available`}, 404);
+    return formatJSONResponse({message: `Payment not successful`}, 404);
   }
 
   if(property.cost != amount) {

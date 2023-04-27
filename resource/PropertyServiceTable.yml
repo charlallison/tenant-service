@@ -16,7 +16,7 @@ PropertyServiceTable:
       - AttributeName: sk
         KeyType: RANGE
     StreamSpecification:
-      StreamViewType: NEW_IMAGE
+      StreamViewType: NEW_AND_OLD_IMAGES
     GlobalSecondaryIndexes:
       - IndexName: StatusIndex
         KeySchema:

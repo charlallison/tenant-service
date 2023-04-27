@@ -6,8 +6,7 @@ export default {
       type: 'object',
       required: ['id'],
       properties: {
-        id: { type: 'string'},
-        email: {type: 'string'}
+        id: { type: 'string'}
       }
     }
   }
