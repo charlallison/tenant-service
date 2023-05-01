@@ -1,5 +1,10 @@
 import {v4} from "uuid";
 
+export enum TenantStatus {
+  Active = "Active",
+  NotActive = "Not Active"
+}
+
 export class Tenant {
   id: string;
   pk: string;
@@ -7,8 +12,7 @@ export class Tenant {
   name: string;
   email: string;
   phone: string;
-  notifyOn: number;
-  isActive: boolean = true;
+  status = TenantStatus.NotActive;
   readonly Type: string = Tenant.name;
 
   constructor(data: Pick<Tenant, 'phone' | 'email' | 'name'>){
@@ -16,15 +20,15 @@ export class Tenant {
     this.name = data.name;
     this.phone = data.phone;
     this.email = data.email;
-    const { pk, sk} = Tenant.BuildKeys(this.id, this.email);
+    const { pk, sk} = Tenant.BuildKeys(this.id);
     this.pk = pk;
     this.sk = sk;
   }
 
-  static BuildKeys(id: string, email: string) {
+  static BuildKeys(id: string) {
     return {
-      pk: `tenant#${id}`,
-      sk: `profile#${email}`
+      pk: `tenant#id=${id}`,
+      sk: `profile#id=${id}`
     }
   }
 }

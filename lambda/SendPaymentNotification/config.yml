@@ -8,7 +8,7 @@ SendPaymentNotification:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:GetItem
+        - dynamodb:Query
         - sns:Publish
       Resource:
         - '*'

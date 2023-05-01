@@ -24,6 +24,12 @@ PropertyServiceTable:
             KeyType: HASH
         Projection:
           ProjectionType: ALL
+      - IndexName: TenantIndex
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        Projection:
+          ProjectionType: ALL
 #      - IndexName: IndexNotifyOn
 #        KeySchema:
 #          - AttributeName: notifyOn

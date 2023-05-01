@@ -32,7 +32,7 @@ functions:
   - ${file(./lambda/DeleteTenant/config.yml)}
   - ${file(./lambda/GetTenant/config.yml)}
   - ${file(./lambda/PayRent/config.yml)}
-#  - ${file(./lambda/SendReminder/config.yml)}
+  - ${file(./lambda/SendReminder/config.yml)}
   - ${file(./lambda/SendPaymentNotification/config.yml)}
   - ${file(./lambda/UpdateTenantOnPayment/config.yml)}
   - ${file(./lambda/CreateProperty/config.yml)}
