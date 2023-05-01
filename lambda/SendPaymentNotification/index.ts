@@ -24,9 +24,11 @@ export const main = async (event: DynamoDBStreamEvent) => {
     },
     ExpressionAttributeNames: {
       '#pk': 'pk',
-      '#type': 'Type'
+      '#type': 'Type',
+      '#name': 'name',
+      '#phone': 'phone'
     },
-    ProjectionExpression: 'name, phone'
+    ProjectionExpression: '#name, #phone'
   }));
 
   const tenant = unmarshall(response.Items[0]) as Tenant;
