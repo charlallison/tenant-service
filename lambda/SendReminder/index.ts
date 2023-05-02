@@ -1,37 +1,30 @@
-import {ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
-import schema from "./schema";
 import {QueryCommand} from "@aws-sdk/client-dynamodb";
-import {DateTime} from "luxon";
-import {marshall} from "@aws-sdk/util-dynamodb";
+import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 import {ddbClient, snsClient} from "@libs/aws-client";
 import {PublishCommand} from "@aws-sdk/client-sns";
-import {Tenant} from "@libs/models";
+import {Tenant} from "@models/tenant";
+import {DateTime} from "luxon";
 
-// @ts-ignore
-export const main: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-  const { year, month } = DateTime.now().plus({year: 1}).minus({ month: -2});
-  const notifyDate = DateTime.local(year, month).toUnixInteger();
-  let response;
+export const main = async () => {
+  const { year, month } = DateTime.now();
+  const notificationDate = DateTime.utc(year, month).toUnixInteger();
 
-  try {
-    response = await ddbClient.send(new QueryCommand({
-      IndexName: 'IndexNotifyOn',
-      TableName: process.env.TENANT_TABLE_NAME,
-      KeyConditionExpression: 'notifyOn = :notifyOn',
-      ExpressionAttributeValues: {
-        ':notifyOn': marshall(notifyDate)
-      },
-      ProjectionExpression: 'phone, #name',
-      ExpressionAttributeNames: {
-        '#name': 'name',
-      }
-    }));
-  }catch (e) {
-    console.error(e);
-  }
+  const response = await ddbClient.send(new QueryCommand({
+    IndexName: 'NotificationDateIndex',
+    TableName: process.env.TENANT_TABLE_NAME,
+    KeyConditionExpression: 'notificationDate = :notificationDate',
+    ExpressionAttributeValues: {
+      // @ts-ignore
+      ':notificationDate': marshall(notificationDate)
+    },
+    ProjectionExpression: 'phone, #name',
+    ExpressionAttributeNames: {
+      '#name': 'name',
+    }
+  }));
 
   response.Items.forEach(item => {
-    sendSMS(item)
+    sendSMS(unmarshall(item) as Tenant)
   });
 };
 
@@ -40,15 +33,11 @@ const sendSMS = async (tenant: Pick<Tenant, 'phone' | 'name'>) => {
 
   await snsClient.send(new PublishCommand({
     PhoneNumber: phone,
-    Message: `Hi ${name}, I hope you're doing great. This is a reminder that your rent expires next month.`,
+    Message: `Hi ${name}, I hope you're doing great. This is a gentle reminder that your rent will expire next month. Please endeavour to pay in due time`,
     MessageAttributes: {
       "AWS.SNS.SMS.SenderID": {
         DataType: "String",
         StringValue: process.env.SENDER_ID,
-      },
-      "AWS.SNS.SMS.SMSType": {
-        DataType: "String",
-        StringValue: "Promotional"
       }
     }
   }));
