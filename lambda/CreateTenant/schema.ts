@@ -4,12 +4,10 @@ export default {
   properties: {
     body: {
       type: 'object',
-      required: ['name', 'phone', 'email'],
+      required: ['name', 'phone'],
       properties: {
         name: {type: 'string'},
-        phone: {type: 'string'},
-        email: { type: 'string'},
-
+        phone: {type: 'string'}
       }
     }
   }

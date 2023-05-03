@@ -10,6 +10,10 @@ PropertyServiceTable:
         AttributeType: S
       - AttributeName: status
         AttributeType: S
+      - AttributeName: notificationDate
+        AttributeType: N
+      - AttributeName: phone
+        AttributeType: S
     KeySchema:
       - AttributeName: pk
         KeyType: HASH
@@ -30,9 +34,15 @@ PropertyServiceTable:
             KeyType: HASH
         Projection:
           ProjectionType: ALL
-#      - IndexName: IndexNotifyOn
-#        KeySchema:
-#          - AttributeName: notifyOn
-#            KeyType: HASH
-#        Projection:
-#          ProjectionType: ALL
+      - IndexName: NotificationDateIndex
+        KeySchema:
+          - AttributeName: notificationDate
+            KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+      - IndexName: PhoneIndex
+        KeySchema:
+          - AttributeName: phone
+            KeyType: HASH
+        Projection:
+          ProjectionType: ALL

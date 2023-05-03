@@ -6,12 +6,19 @@ import {marshall} from "@aws-sdk/util-dynamodb";
 import schema from "./schema";
 import {ddbClient} from "@libs/aws-client";
 import {Tenant} from "@models/tenant";
+import {getTenantByPhone} from "../tenant-util";
+import {BadRequest} from "http-errors";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-  const { name, phone, email } = event.body;
+  const { phone, name }: { [key: string]: any } = event.body;
 
-  // @ts-ignore
-  const tenant = new Tenant({ name, phone, email });
+  const response = await getTenantByPhone(phone);
+  if(response.Items.length > 0) {
+    const {message, statusCode} = new BadRequest(`Tenant already exists`);
+    return formatJSONResponse({ message }, statusCode)
+  }
+
+  const tenant = new Tenant({ name, phone });
 
   await ddbClient.send(new PutItemCommand({
     Item: marshall(tenant, {convertClassInstanceToMap: true}),

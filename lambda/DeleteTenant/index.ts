@@ -10,8 +10,6 @@ import {Tenant, TenantStatus} from "@models/tenant";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;
-  // @ts-ignore
-  const pk = Tenant.BuildKeys(id);
 
   await ddbClient.send(new UpdateItemCommand({
     Key: marshall(Tenant.BuildKeys(id)),
