@@ -7,8 +7,8 @@ export enum TenantStatus {
 
 export class Tenant {
   id: string;
-  pk: string;
-  sk: string;
+  PK: string;
+  SK: string;
   name: string;
   phone: string;
   status = TenantStatus.NotActive;
@@ -18,15 +18,15 @@ export class Tenant {
     this.id = v4();
     this.name = data.name;
     this.phone = data.phone;
-    const { pk, sk} = Tenant.BuildKeys(this.id);
-    this.pk = pk;
-    this.sk = sk;
+    const { PK, SK} = Tenant.BuildKeys(this.id);
+    this.PK = PK;
+    this.SK = SK;
   }
 
   static BuildKeys(id: string) {
     return {
-      pk: `tenant#id=${id}`,
-      sk: `profile#id=${id}`
+      PK: `tenant#id=${id}`,
+      SK: `profile#id=${id}`
     }
   }
 }

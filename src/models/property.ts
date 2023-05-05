@@ -7,8 +7,8 @@ export enum PropertyStatus {
 
 export class Property {
   id: string;
-  pk: string;
-  sk: string
+  PK: string;
+  SK: string
   city: string;
   state: string;
   address: string;
@@ -25,15 +25,15 @@ export class Property {
     this.rooms = data.rooms;
     this.state = data.state;
 
-    const { pk, sk } = Property.BuildKeys(this.id);
-    this.pk = pk;
-    this.sk = sk;
+    const { PK, SK } = Property.BuildKeys(this.id);
+    this.PK = PK;
+    this.SK = SK;
   }
 
   static BuildKeys(id: string) {
     return {
-      pk: `property#id=${id}`,
-      sk: `property#id=${id}`
+      PK: `property#id=${id}`,
+      SK: `property#id=${id}`
     }
   }
 }
