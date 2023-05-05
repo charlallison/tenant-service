@@ -1,9 +1,9 @@
 import {QueryCommand} from "@aws-sdk/client-dynamodb";
 import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
-import {ddbClient, snsClient} from "@libs/aws-client";
-import {PublishCommand} from "@aws-sdk/client-sns";
+import {ddbClient} from "@libs/aws-client";
 import {Tenant} from "@models/tenant";
 import {DateTime} from "luxon";
+import {sendSMS} from "../util-sms";
 
 export const main = async () => {
   const { year, month } = DateTime.now();
@@ -25,21 +25,9 @@ export const main = async () => {
   }));
 
   response.Items.forEach(item => {
-    sendSMS(unmarshall(item) as Tenant)
+    const {name, phone} = unmarshall(item) as Pick<Tenant, 'name' | 'phone'>
+    const message = `Hi ${name}, I hope you're doing great. This is a gentle reminder that your rent will expire next month. Please endeavour to pay in due time`
+
+    sendSMS(message, phone, process.env.SENDER_ID)
   });
 };
-
-const sendSMS = async (tenant: Pick<Tenant, 'phone' | 'name'>) => {
-  const { phone, name } = tenant;
-
-  await snsClient.send(new PublishCommand({
-    PhoneNumber: phone,
-    Message: `Hi ${name}, I hope you're doing great. This is a gentle reminder that your rent will expire next month. Please endeavour to pay in due time`,
-    MessageAttributes: {
-      "AWS.SNS.SMS.SenderID": {
-        DataType: "String",
-        StringValue: process.env.SENDER_ID,
-      }
-    }
-  }));
-}
