@@ -1,6 +1,6 @@
 GetProperty:
   handler: ./lambda/GetProperty/index.main
-  description: Get property based on its Id
+  description: Get property by its Id
   memorySize: 512
   timeout: 10
   iamRoleStatements:

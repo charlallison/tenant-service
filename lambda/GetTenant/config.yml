@@ -1,6 +1,6 @@
 GetTenant:
   handler: ./lambda/GetTenant/index.main
-  description: "Get a tenant using the Id"
+  description: "Get tenant by its Id"
   memorySize: 512
   timeout: 10 # API Gateway has a timeout of 30 seconds
   environment:

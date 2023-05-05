@@ -1,6 +1,6 @@
 ListTenants:
   handler: ./lambda/ListTenants/index.main
-  description: "Fetches all the saved tenant based on their status"
+  description: "Fetches tenants by status"
   memorySize: 512
   timeout: 10
   environment:

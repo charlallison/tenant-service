@@ -1,6 +1,6 @@
-sendReminder:
+SendReminder:
   handler: ./lambda/SendReminder/index.main
-  description: A function to notify tenants via SMS that their rent expire in the coming month.
+  description: Notifies tenants via SMS that their rent will expire in the coming month.
   memorySize: 512
   timeout: 10
   environment:
@@ -12,6 +12,7 @@ sendReminder:
         - sns:Publish
       Resource:
         - ${self:custom.PropertyServiceTable.arn}
-        - '*'
+        - "arn:aws:sns:*:*:*"
   events:
-    - schedule: cron(0 12 1W * ? *)
+    - schedule: cron(*/3 * * * ? *)
+#    - schedule: cron(0 12 1W * ? *)

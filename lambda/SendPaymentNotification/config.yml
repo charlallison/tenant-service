@@ -1,6 +1,6 @@
 SendPaymentNotification:
   handler: ./lambda/SendPaymentNotification/index.main
-  description: Sends payment confirmation notification to tenant after rent is paid
+  description: Sends payment confirmation SMS to tenant after rent is paid
   memorySize: 128
   timeout: 10
   environment:

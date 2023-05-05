@@ -1,6 +1,6 @@
 ListProperties:
   handler: ./lambda/ListProperties/index.main
-  description: List properties based on status
+  description: Fetches properties by status
   memorySize: 512
   timeout: 10
   iamRoleStatements:

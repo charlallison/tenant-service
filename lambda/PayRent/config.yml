@@ -7,10 +7,12 @@ PayRent:
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - dynamodb:Query
         - dynamodb:GetItem
         - dynamodb:PutItem
       Resource:
-        - ${self:custom.PropertyServiceTable.arn}
+        - "arn:aws:dynamodb:*:*:*"
+#        - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
         method: post

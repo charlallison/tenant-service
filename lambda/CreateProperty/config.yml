@@ -7,7 +7,6 @@ CreateProperty:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:GetItem
         - dynamodb:PutItem
       Resource:
         - ${self:custom.PropertyServiceTable.arn}
