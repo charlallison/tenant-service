@@ -6,7 +6,7 @@ import {marshall} from "@aws-sdk/util-dynamodb";
 import schema from "./schema";
 import {ddbClient} from "@libs/aws-client";
 import {Tenant} from "@models/tenant";
-import {getTenantByPhone} from "../tenant-util";
+import {getTenantByPhone} from "../util-tenant";
 import {BadRequest} from "http-errors";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
@@ -28,7 +28,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   return formatJSONResponse({
     message: `Tenant created successfully`,
     tenant
-  });
+  }, 201);
 };
 
 export const main = middyfy(handler, schema);

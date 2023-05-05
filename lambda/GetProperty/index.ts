@@ -12,7 +12,6 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
 
   const response = await ddbClient.send(new GetItemCommand({
     TableName: process.env.TENANT_TABLE_NAME,
-    // @ts-ignore
     Key: marshall(Property.BuildKeys(id))
   }));
 

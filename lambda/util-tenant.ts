@@ -1,13 +1,18 @@
 import {ddbClient} from "@libs/aws-client";
 import {GetItemCommand, QueryCommand} from "@aws-sdk/client-dynamodb";
-import {marshall} from "@aws-sdk/util-dynamodb";
+import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 import {Tenant} from "@models/tenant";
 
 export const getTenantById = async(id: string) => {
-  return await ddbClient.send(new GetItemCommand({
+  const response = await ddbClient.send(new GetItemCommand({
     TableName: process.env.TENANT_TABLE_NAME,
-    Key: marshall(Tenant.BuildKeys(id))
+    Key: marshall(Tenant.BuildKeys(id)),
+    ConsistentRead: true
   }));
+
+  if(response.Item) {
+    return unmarshall(response.Item) as Tenant;
+  }
 }
 
 export const getTenantByPhone = async(phone: string) => {
@@ -16,6 +21,7 @@ export const getTenantByPhone = async(phone: string) => {
     IndexName: 'PhoneIndex',
     KeyConditionExpression: 'phone = :phone',
     ExpressionAttributeValues: {
+      // @ts-ignore
       ':phone': marshall(phone)
     }
   }))

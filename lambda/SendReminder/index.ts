@@ -17,9 +17,10 @@ export const main = async () => {
       // @ts-ignore
       ':notificationDate': marshall(notificationDate)
     },
-    ProjectionExpression: 'phone, #name',
+    ProjectionExpression: '#phone, #name',
     ExpressionAttributeNames: {
       '#name': 'name',
+      '#phone': 'phone'
     }
   }));
 

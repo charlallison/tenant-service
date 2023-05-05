@@ -7,19 +7,20 @@ import {marshall} from "@aws-sdk/util-dynamodb";
 import {Property} from "@models/property";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-  const { city, state, address, cost, rooms } = event.body;
+  const { city, state, address, cost, rooms }: { [key: string]: any } = event.body;
 
-  // @ts-ignore
   const property = new Property({city, state, cost, address, rooms});
+
   await ddbClient.send(new PutItemCommand({
     TableName: process.env.TENANT_TABLE_NAME,
     Item: marshall(property, {convertClassInstanceToMap: true})
   }));
 
+
   return formatJSONResponse({
-    message: `New property saved`,
+    message: `Property created`,
     property
-  });
+  }, 201);
 }
 
 export const main = middyfy(handler, schema);

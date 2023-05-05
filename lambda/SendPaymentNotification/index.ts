@@ -7,31 +7,10 @@ import {QueryCommand} from "@aws-sdk/client-dynamodb";
 import {Payment} from "@models/payment";
 
 export const main = async (event: DynamoDBStreamEvent) => {
-  const { NewImage } = event.Records[0].dynamodb;
-  // @ts-ignore
+  const { NewImage }: { [key: string]: any } = event.Records[0].dynamodb;
+
   const payment = unmarshall(NewImage) as Payment;
-
-  const response = await ddbClient.send(new QueryCommand({
-    TableName: process.env.TENANT_TABLE_NAME,
-    IndexName: 'TenantIndex',
-    KeyConditionExpression: '#pk = :pk',
-    FilterExpression: '#type = :type',
-    ExpressionAttributeValues: {
-      // @ts-ignore
-      ':pk': marshall(payment.pk),
-      // @ts-ignore
-      ':type': marshall(Tenant.name)
-    },
-    ExpressionAttributeNames: {
-      '#pk': 'pk',
-      '#type': 'Type',
-      '#name': 'name',
-      '#phone': 'phone'
-    },
-    ProjectionExpression: '#name, #phone'
-  }));
-
-  const tenant = unmarshall(response.Items[0]) as Tenant;
+  const tenant = await getTenant(payment);
 
   await snsClient.send(new PublishCommand({
     PhoneNumber: tenant.phone,
@@ -43,5 +22,28 @@ export const main = async (event: DynamoDBStreamEvent) => {
       }
     }
   }));
+}
 
+const getTenant = async (payment: Payment) => {
+  const response = await ddbClient.send(new QueryCommand({
+    TableName: process.env.TENANT_TABLE_NAME,
+    IndexName: 'TenantIndex',
+    KeyConditionExpression: '#pk = :pk',
+    FilterExpression: '#type = :type',
+    ExpressionAttributeValues: {
+      // @ts-ignore
+      ':pk': marshall(payment.PK),
+      // @ts-ignore
+      ':type': marshall(Tenant.name)
+    },
+    ExpressionAttributeNames: {
+      '#pk': 'PK',
+      '#type': 'Type',
+      '#name': 'name',
+      '#phone': 'phone'
+    },
+    ProjectionExpression: '#name, #phone'
+  }))
+
+  return unmarshall(response.Items[0]) as Tenant
 }
