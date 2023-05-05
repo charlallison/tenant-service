@@ -6,8 +6,8 @@ import {ddbClient} from "@libs/aws-client";
 import {UpdateItemCommand} from "@aws-sdk/client-dynamodb";
 
 export const main = async (event: DynamoDBStreamEvent) => {
-  const {NewImage} = event.Records[0].dynamodb;
-  // @ts-ignore
+  const { NewImage }: { [key: string]: any } = event.Records[0].dynamodb;
+
   const payment = unmarshall(NewImage) as Payment;
 
   await ddbClient.send(new UpdateItemCommand({

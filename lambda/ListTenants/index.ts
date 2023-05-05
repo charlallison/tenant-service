@@ -4,22 +4,26 @@ import schema from "./schema";
 import {QueryCommand} from "@aws-sdk/client-dynamodb";
 import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 import {ddbClient} from "@libs/aws-client";
+import {Tenant} from "@models/tenant";
 
-// @ts-ignore
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-  const { status } = event.queryStringParameters;
+  const { status }: {[key: string]: any} = event.queryStringParameters;
 
   const result = await ddbClient.send(new QueryCommand({
     TableName: process.env.TENANT_TABLE_NAME,
     IndexName: 'StatusIndex',
     KeyConditionExpression: '#status = :status',
+    FilterExpression: '#type = :type',
     ExpressionAttributeNames: {
       '#status': 'status',
-      '#name': 'name'
+      '#name': 'name',
+      '#type': 'Type'
     },
     ExpressionAttributeValues: {
       // @ts-ignore
-      ':status': marshall(status)
+      ':status': marshall(status),
+      // @ts-ignore
+      ':type': marshall(Tenant.name)
     },
     ProjectionExpression: 'id, email, #name'
   }));

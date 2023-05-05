@@ -8,7 +8,7 @@ import {Property} from "@models/property";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;
-  const { cost, rooms } = event.body;
+  const { cost, rooms }: { [key: string]: any } = event.body;
 
   const response = await ddbClient.send(new UpdateItemCommand({
     TableName: process.env.TENANT_TABLE_NAME,
@@ -24,7 +24,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   }));
 
   return formatJSONResponse({
-    message: `Property updated successfully`,
+    message: `Property updated!`,
     property: unmarshall(response.Attributes)
   });
 
