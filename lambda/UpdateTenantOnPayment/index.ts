@@ -7,15 +7,13 @@ import {Tenant, TenantStatus} from "@models/tenant";
 import {DateTime} from "luxon";
 
 export const main = async (event: DynamoDBStreamEvent) => {
-  const { NewImage } = event.Records[0].dynamodb;
-  // @ts-ignore
+  const { NewImage }:{ [p: string]: any } = event.Records[0].dynamodb;
   const payment= unmarshall(NewImage) as Payment;
-  const id = payment.pk.replace('tenant#id=', ``);
 
   const notificationDate = DateTime.fromMillis(payment.expiresOn * 1000).minus({month: 1}).toUnixInteger();
 
   await ddbClient.send(new UpdateItemCommand({
-    Key: marshall(Tenant.BuildKeys(id)),
+    Key: marshall(Tenant.BuildKeys(payment.tenantId)),
     TableName: process.env.TENANT_TABLE_NAME,
     UpdateExpression: 'SET notificationDate = :notificationDate, #status = :status',
     ExpressionAttributeValues: {

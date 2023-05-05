@@ -10,6 +10,7 @@ import {PropertyStatus} from "@models/property";
 import {findProperty, getTenantRecord} from "../util-payment";
 
 const EXPECTED_RECORD_LENGTH: number = 2;
+const { message, statusCode } = new BadRequest(`Property not available`);
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters
@@ -33,13 +34,11 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
     payment = record[1] as Payment;
 
     if(payment.propertyId !== propertyId) {
-      const { message, statusCode} = new BadRequest(`Invalid payment parameter`);
       return formatJSONResponse({ message }, statusCode);
     }
   }
 
   if(payment && property.status === PropertyStatus.NotAvailable && payment.tenantId !== id) {
-    const { message, statusCode } = new BadRequest(`Property not available`);
     return formatJSONResponse({ message }, statusCode);
   }
 
