@@ -4,9 +4,9 @@ PropertyServiceTable:
     TableName: ${self:service}-${self:provider.stage}-Table
     BillingMode: PAY_PER_REQUEST
     AttributeDefinitions:
-      - AttributeName: pk
+      - AttributeName: PK
         AttributeType: S
-      - AttributeName: sk
+      - AttributeName: SK
         AttributeType: S
       - AttributeName: status
         AttributeType: S
@@ -15,9 +15,9 @@ PropertyServiceTable:
       - AttributeName: phone
         AttributeType: S
     KeySchema:
-      - AttributeName: pk
+      - AttributeName: PK
         KeyType: HASH
-      - AttributeName: sk
+      - AttributeName: SK
         KeyType: RANGE
     StreamSpecification:
       StreamViewType: NEW_AND_OLD_IMAGES
@@ -30,7 +30,7 @@ PropertyServiceTable:
           ProjectionType: ALL
       - IndexName: TenantIndex
         KeySchema:
-          - AttributeName: pk
+          - AttributeName: PK
             KeyType: HASH
         Projection:
           ProjectionType: ALL
