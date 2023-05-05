@@ -1,68 +1,64 @@
 import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
 import schema from "./schema";
-import {GetItemCommand, PutItemCommand} from "@aws-sdk/client-dynamodb";
-import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
+import {PutItemCommand} from "@aws-sdk/client-dynamodb";
+import {marshall} from "@aws-sdk/util-dynamodb";
 import {middyfy} from "@libs/lambda";
-import {BadRequest, InternalServerError} from "http-errors";
+import {BadRequest, NotFound} from "http-errors";
 import {ddbClient} from "@libs/aws-client";
 import {Payment} from "@models/payment";
-import {TenantStatus, Tenant} from "@models/tenant";
-import {Property, PropertyStatus} from "@models/property";
+import {PropertyStatus} from "@models/property";
+import {findProperty, getTenantRecord} from "../util-payment";
+
+const EXPECTED_RECORD_LENGTH: number = 2;
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters
-  const { amount, propertyId } = event.body;
-  // @ts-ignore
-  const tenant = unmarshall(await findTenant(id)) as Tenant;
-  if(!tenant || tenant.status !== TenantStatus.NotActive) {
-    return formatJSONResponse({message: `Payment not successful`}, 404);
+  const { amount, propertyId }: { [key: string]: any } = event.body;
+  let payment: Payment;
+
+  // ensure the property exists
+  const property = await findProperty(propertyId);
+  if(!property) {
+    const { message, statusCode } = new NotFound(`Property not found`);
+    return formatJSONResponse({ message }, statusCode);
   }
-  // @ts-ignore
-  const property = unmarshall(await findProperty(propertyId)) as Property;
-  if(!property || property.status !== PropertyStatus.Available) {
-    return formatJSONResponse({message: `Payment not successful`}, 404);
+
+  const record = await getTenantRecord(id);
+  if(!record) {
+    const { message, statusCode } = new NotFound(`Tenant not found`)
+    return formatJSONResponse({ message }, statusCode);
+  }
+
+  if(record.length === EXPECTED_RECORD_LENGTH) {
+    payment = record[1] as Payment;
+
+    if(payment.propertyId !== propertyId) {
+      const { message, statusCode} = new BadRequest(`Invalid payment parameter`);
+      return formatJSONResponse({ message }, statusCode);
+    }
+  }
+
+  if(payment && property.status === PropertyStatus.NotAvailable && payment.tenantId !== id) {
+    const { message, statusCode } = new BadRequest(`Property not available`);
+    return formatJSONResponse({ message }, statusCode);
   }
 
   if(property.cost != amount) {
-    const { message, statusCode } = new BadRequest(`Invalid amount: ${amount}`);
+    const { message, statusCode } = new BadRequest(`Invalid amount ${amount}`);
     return formatJSONResponse({message}, statusCode);
   }
 
-  // @ts-ignore
-  const payment = new Payment(id, { amount, propertyId });
+  payment = new Payment({ tenantId: id, amount, propertyId });
 
-  try{
-    await ddbClient.send(new PutItemCommand({
-      TableName: process.env.TENANT_TABLE_NAME,
-      Item: marshall(payment, {convertClassInstanceToMap: true})
-    }));
-
-    return formatJSONResponse({
-      message: `Rent has been paid`,
-      payment
-    })
-  }catch (e) {
-    throw new InternalServerError(e);
-  }
-}
-
-
-const findTenant = async (tenantId: string) => {
-  const response = await ddbClient.send(new GetItemCommand({
+  await ddbClient.send(new PutItemCommand({
     TableName: process.env.TENANT_TABLE_NAME,
-    Key: marshall(Tenant.BuildKeys(tenantId))
-  }))
-
-  return response.Item;
-}
-
-const findProperty = async (propertyId: string) => {
-  const response = await ddbClient.send(new GetItemCommand({
-    TableName: process.env.TENANT_TABLE_NAME,
-    Key: marshall(Property.BuildKeys(propertyId))
+    Item: marshall(payment, {convertClassInstanceToMap: true})
   }));
 
-  return response.Item
+  return formatJSONResponse({
+    message: `Rent has been paid`,
+    payment
+  });
 }
 
 export const main = middyfy(handler, schema);
