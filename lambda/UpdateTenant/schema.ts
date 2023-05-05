@@ -1,7 +1,13 @@
 export default {
   type: 'object',
+  required: ['body'],
   properties: {
-    name: { type: 'string'},
-    phone: { type: 'string'}
-  },
+    body: {
+      type: 'object',
+      required: ['name'],
+      properties: {
+        name: {type: 'string'}
+      }
+    }
+  }
 } as const

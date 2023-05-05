@@ -5,11 +5,11 @@ export default {
     queryStringParameters: {
       type: ['object', 'null'],
       required: ['status'],
-      default: { status: 'active' },
+      default: { status: 'Active' },
       properties: {
         status: {
           type: 'string',
-          enum: ['active', 'inactive']
+          enum: ['Active', 'Not Active']
         }
       },
     }
