@@ -1,18 +1,17 @@
 import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
 import schema from "./schema";
 import {middyfy} from "@libs/lambda";
-import {ddbClient} from "@libs/aws-client";
-import {GetItemCommand} from "@aws-sdk/client-dynamodb";
-import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
+import {ddbDocClient} from "@libs/aws-client";
 import {NotFound} from "http-errors";
 import {Property} from "@models/property";
+import {GetCommand} from "@aws-sdk/lib-dynamodb";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;
 
-  const response = await ddbClient.send(new GetItemCommand({
+  const response = await ddbDocClient.send(new GetCommand({
     TableName: process.env.TENANT_TABLE_NAME,
-    Key: marshall(Property.BuildKeys(id))
+    Key: Property.BuildPK(id)
   }));
 
   if (!response.Item) {
@@ -21,7 +20,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   }
 
   return formatJSONResponse({
-    property: unmarshall(response.Item)
+    ...response.Item
   })
 }
 

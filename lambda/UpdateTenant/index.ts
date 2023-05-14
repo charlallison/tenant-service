@@ -1,12 +1,11 @@
-import {UpdateItemCommand} from "@aws-sdk/client-dynamodb";
 import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
 import schema from "./schema";
 import {middyfy} from "@libs/lambda";
-import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 import {NotFound} from "http-errors";
-import {ddbClient} from "@libs/aws-client";
+import {ddbDocClient} from "@libs/aws-client";
 import {Tenant} from "@models/tenant";
 import {getTenantById} from "../util-tenant";
+import {UpdateCommand} from "@aws-sdk/lib-dynamodb";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;
@@ -16,16 +15,15 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
 
   if (!tenant) {
     const {message, statusCode } = new NotFound(`Tenant not found`);
-    return formatJSONResponse({message}, statusCode)
+    return formatJSONResponse({ message }, statusCode);
   }
 
-  const item = await ddbClient.send(new UpdateItemCommand({
-    Key: marshall(Tenant.BuildKeys(id)),
+  const item = await ddbDocClient.send(new UpdateCommand({
+    Key: Tenant.BuildPK(id),
     TableName: process.env.TENANT_TABLE_NAME,
     UpdateExpression: 'SET #name = :name',
     ExpressionAttributeValues: {
-      // @ts-ignore
-      ':name': marshall(name),
+      ':name': name,
     },
     ExpressionAttributeNames: {
       '#name': 'name'
@@ -35,7 +33,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
 
   return formatJSONResponse({
     message: `Tenant updated!`,
-    tenant: unmarshall(item.Attributes)
+    tenant: item.Attributes
   });
 };
 

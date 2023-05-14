@@ -1,19 +1,18 @@
 import {middyfy} from "@libs/lambda";
 import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
 import schema from "./schema";
-import {ddbClient} from "@libs/aws-client";
-import {PutItemCommand} from "@aws-sdk/client-dynamodb";
-import {marshall} from "@aws-sdk/util-dynamodb";
+import {ddbDocClient} from "@libs/aws-client";
 import {Property} from "@models/property";
+import {PutCommand} from "@aws-sdk/lib-dynamodb";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { city, state, address, cost, rooms }: { [key: string]: any } = event.body;
 
   const property = new Property({city, state, cost, address, rooms});
 
-  await ddbClient.send(new PutItemCommand({
+  await ddbDocClient.send(new PutCommand({
     TableName: process.env.TENANT_TABLE_NAME,
-    Item: marshall(property, {convertClassInstanceToMap: true})
+    Item: property
   }));
 
 
