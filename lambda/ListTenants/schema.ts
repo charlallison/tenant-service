@@ -9,7 +9,7 @@ export default {
       properties: {
         status: {
           type: 'string',
-          enum: ['Active', 'Not Active']
+          enum: ['Active', 'Inactive']
         }
       },
     }
