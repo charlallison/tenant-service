@@ -11,8 +11,8 @@ PayRent:
         - dynamodb:GetItem
         - dynamodb:PutItem
       Resource:
-        - !Join ["/", ["${self:custom.PropertyServiceTable.arn}", "index", "*"]]
-        - ${self:custom.PropertyServiceTable.arn}
+        - !Join ["/", ["${self:custom.DatabaseTable.arn}", "index", "*"]]
+        - ${self:custom.DatabaseTable.arn}
   events:
     - http:
         method: POST

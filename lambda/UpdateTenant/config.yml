@@ -10,7 +10,7 @@ UpdateTenant:
         - dynamodb:UpdateItem
         - dynamodb:GetItem
       Resource:
-        - ${self:custom.PropertyServiceTable.arn}
+        - ${self:custom.DatabaseTable.arn}
   events:
     - http:
         method: PATCH

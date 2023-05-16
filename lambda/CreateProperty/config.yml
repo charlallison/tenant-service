@@ -9,7 +9,7 @@ CreateProperty:
       Action:
         - dynamodb:PutItem
       Resource:
-        - ${self:custom.PropertyServiceTable.arn}
+        - ${self:custom.DatabaseTable.arn}
   events:
     - http:
         method: POST

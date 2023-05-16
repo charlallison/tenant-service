@@ -1,4 +1,4 @@
-service: property-service
+service: tenant-service
 
 frameworkVersion: "3"
 
@@ -20,10 +20,11 @@ provider:
   stage: ${opt:stage, 'dev'}
   tracing:
     lambda: true
+    apiGateway: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     REGION: ${self:provider.region}
-    TENANT_TABLE_NAME: ${self:custom.PropertyServiceTable.name}
+    TENANT_TABLE_NAME: ${self:custom.DatabaseTable.name}
 
 functions:
   - ${file(./lambda/CreateTenant/config.yml)}
@@ -43,19 +44,17 @@ functions:
 
 resources:
   Resources:
-    PropertyServiceTable: ${file(./resource/PropertyServiceTable.yml):PropertyServiceTable}
+    DynamoDBTable: ${file(./resource/database-table.yml):TenantServiceTable}
 
 plugins:
   - serverless-esbuild
   - serverless-iam-roles-per-function
 
 custom:
-  PropertyServiceTable:
-    name: !Ref PropertyServiceTable
-    arn: !GetAtt PropertyServiceTable.Arn
-    streamArn: !GetAtt [PropertyServiceTable, StreamArn]
-#  PropertyServiceTableStream:
-#    arn: !GetAtt [PropertyServiceTable, StreamArn]
+  DatabaseTable:
+    name: !Ref DynamoDBTable
+    arn: !GetAtt DynamoDBTable.Arn
+    streamArn: !GetAtt [DynamoDBTable, StreamArn]
 
   esbuild:
     bundle: true

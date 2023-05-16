@@ -8,7 +8,7 @@ GetProperty:
       Action:
         - dynamodb:GetItem
       Resource:
-        - ${self:custom.PropertyServiceTable.arn}
+        - ${self:custom.DatabaseTable.arn}
   events:
     - http:
         method: GET

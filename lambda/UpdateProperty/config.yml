@@ -8,7 +8,7 @@ UpdateProperty:
       Action:
         - dynamodb:UpdateItem
       Resource:
-        - ${self:custom.PropertyServiceTable.arn}
+        - ${self:custom.DatabaseTable.arn}
   events:
     - http:
         method: PATCH

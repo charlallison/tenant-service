@@ -11,12 +11,12 @@ SendPaymentNotification:
         - dynamodb:GetItem
         - sns:Publish
       Resource:
-        - ${self:custom.PropertyServiceTable.arn}
+        - ${self:custom.DatabaseTable.arn}
         - 'arn:aws:sns:*:*:*'
   events:
     - stream:
         type: dynamodb
-        arn: ${self:custom.PropertyServiceTable.streamArn}
+        arn: ${self:custom.DatabaseTable.streamArn}
         filterPatterns:
           - eventName: [INSERT]
             dynamodb:

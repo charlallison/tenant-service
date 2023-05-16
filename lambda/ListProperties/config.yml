@@ -7,7 +7,7 @@ ListProperties:
     - Effect: Allow
       Action:
         - dynamodb:Query
-      Resource: !Join ["/", ["${self:custom.PropertyServiceTable.arn}", "index", "*"]]
+      Resource: !Join ["/", ["${self:custom.DatabaseTable.arn}", "index", "*"]]
   events:
     - http:
         method: GET

@@ -1,4 +1,4 @@
-PropertyServiceTable:
+TenantServiceTable:
   Type: AWS::DynamoDB::Table
   Properties:
     TableName: ${self:service}-${self:provider.stage}-Table
