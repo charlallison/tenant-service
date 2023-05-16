@@ -7,11 +7,10 @@ CreateTenant:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:Query
         - dynamodb:PutItem
       Resource:
-        - "arn:aws:dynamodb:*:*:*"
+        - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
-        method: post
+        method: POST
         path: /tenants

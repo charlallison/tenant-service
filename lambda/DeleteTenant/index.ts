@@ -5,35 +5,33 @@ import schema from "./schema";
 import {middyfy} from "@libs/lambda";
 import {ddbDocClient} from "@libs/aws-client";
 import {Tenant, TenantStatus} from "@models/tenant";
-import {getTenantById} from "../util-tenant";
-import {NotFound} from "http-errors";
+import {InternalServerError} from "http-errors";
 import {UpdateCommand} from "@aws-sdk/lib-dynamodb";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters;
 
-  const tenant = await getTenantById(id);
+  try {
+    await ddbDocClient.send(new UpdateCommand({
+      Key: Tenant.BuildPK(id),
+      TableName: process.env.TENANT_TABLE_NAME,
+      UpdateExpression: 'SET #status = :status',
+      ConditionExpression: 'attribute_exists(id)',
+      ExpressionAttributeValues: {
+        ':status': TenantStatus.InActive,
+      },
+      ExpressionAttributeNames: {
+        '#status': 'status'
+      }
+    }));
 
-  if (!tenant) {
-    const { message, statusCode } = new NotFound(`Tenant not found`);
+    return formatJSONResponse({
+      message: `Tenant deleted`
+    });
+  }catch (e) {
+    const { message, statusCode } = new InternalServerError(`Delete tenant failed`);
     return formatJSONResponse({ message }, statusCode);
   }
-
-  await ddbDocClient.send(new UpdateCommand({
-    Key: Tenant.BuildPK(id),
-    TableName: process.env.TENANT_TABLE_NAME,
-    UpdateExpression: 'SET #status = :status',
-    ExpressionAttributeValues: {
-      ':status': TenantStatus.InActive,
-    },
-    ExpressionAttributeNames: {
-      '#status': 'status'
-    }
-  }));
-
-  return formatJSONResponse({
-    message: `Tenant deleted`
-  });
 }
 
 export const main = middyfy(handler, schema);

@@ -20,5 +20,4 @@ export const main = async (event: DynamoDBStreamEvent) => {
       '#status': 'status'
     }
   }));
-
 }

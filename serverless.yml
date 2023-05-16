@@ -20,8 +20,8 @@ provider:
   stage: ${opt:stage, 'dev'}
   tracing:
     lambda: true
-    apiGateway: true
   environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     REGION: ${self:provider.region}
     TENANT_TABLE_NAME: ${self:custom.PropertyServiceTable.name}
 
@@ -32,9 +32,9 @@ functions:
   - ${file(./lambda/DeleteTenant/config.yml)}
   - ${file(./lambda/GetTenant/config.yml)}
   - ${file(./lambda/PayRent/config.yml)}
-  - ${file(./lambda/SendReminder/config.yml)}
+  - ${file(./lambda/SendPaymentReminder/config.yml)}
   - ${file(./lambda/SendPaymentNotification/config.yml)}
-  - ${file(./lambda/UpdateTenantOnPayment/config.yml)}
+  - ${file(./lambda/UpdateTenantStatus/config.yml)}
   - ${file(./lambda/CreateProperty/config.yml)}
   - ${file(./lambda/UpdatePropertyStatus/config.yml)}
   - ${file(./lambda/ListProperties/config.yml)}
@@ -53,8 +53,9 @@ custom:
   PropertyServiceTable:
     name: !Ref PropertyServiceTable
     arn: !GetAtt PropertyServiceTable.Arn
-  PropertyServiceTableStream:
-    arn: !GetAtt [PropertyServiceTable, StreamArn]
+    streamArn: !GetAtt [PropertyServiceTable, StreamArn]
+#  PropertyServiceTableStream:
+#    arn: !GetAtt [PropertyServiceTable, StreamArn]
 
   esbuild:
     bundle: true

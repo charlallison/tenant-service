@@ -14,6 +14,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
     TableName: process.env.TENANT_TABLE_NAME,
     Key: Property.BuildPK(id),
     UpdateExpression: `SET cost = :cost, rooms = :rooms`,
+    ConditionExpression: 'attribute_exists(id)',
     ExpressionAttributeValues: {
       ':cost': cost,
       ':rooms': rooms

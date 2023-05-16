@@ -8,9 +8,8 @@ ListTenants:
     - Effect: Allow
       Action:
         - dynamodb:Query
-      Resource:
-        - "arn:aws:dynamodb:*:*:*"
+      Resource: !Join ["/", ["${self:custom.PropertyServiceTable.arn}", "index", "*"]]
   events:
     - http:
-        method: get
+        method: GET
         path: /tenants

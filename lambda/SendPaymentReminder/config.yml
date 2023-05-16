@@ -1,5 +1,5 @@
-SendReminder:
-  handler: ./lambda/SendReminder/index.main
+SendPaymentReminder:
+  handler: ./lambda/SendPaymentReminder/index.main
   description: Notifies tenants via SMS that their rent will expire in the coming month.
   memorySize: 512
   timeout: 10
@@ -11,8 +11,8 @@ SendReminder:
         - dynamodb:Query
         - sns:Publish
       Resource:
-        - ${self:custom.PropertyServiceTable.arn}
-        - "arn:aws:sns:*:*:*"
+        - !Join ["/", ["${self:custom.PropertyServiceTable.arn}", "index", "*"]]
+        - arn:aws:sns:*:*:*
   events:
     - schedule: cron(*/3 * * * ? *)
 #    - schedule: cron(0 12 1W * ? *)

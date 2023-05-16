@@ -6,8 +6,8 @@ export const sendSMS = async (message: string, phoneNumber: string, sender: stri
     PhoneNumber: phoneNumber,
     Message: message,
     MessageAttributes: {
-      "AWS.SNS.SMS.SenderID": {
-        DataType: "String",
+      'AWS.SNS.SMS.SenderID': {
+        DataType: 'String',
         StringValue: sender,
       }
     }

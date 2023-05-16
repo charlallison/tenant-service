@@ -8,14 +8,15 @@ SendPaymentNotification:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:Query
+        - dynamodb:GetItem
         - sns:Publish
       Resource:
-        - '*'
+        - ${self:custom.PropertyServiceTable.arn}
+        - 'arn:aws:sns:*:*:*'
   events:
     - stream:
         type: dynamodb
-        arn: ${self:custom.PropertyServiceTableStream.arn}
+        arn: ${self:custom.PropertyServiceTable.streamArn}
         filterPatterns:
           - eventName: [INSERT]
             dynamodb:

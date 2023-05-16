@@ -6,18 +6,23 @@ import {middyfy} from "@libs/lambda";
 import {ddbDocClient} from "@libs/aws-client";
 import {GSIs} from "../gsi-index";
 import {Property} from "@models/property";
-import { QueryCommand } from "@aws-sdk/lib-dynamodb";
+import {QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 const handler:ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { status }: { [key: string]: any } = event.queryStringParameters;
-  const gsi1key = Property.BuildGSIKey(status);
+  const { GSI1PK } = Property.BuildGSIKey();
 
   const result = await ddbDocClient.send(new QueryCommand({
     TableName: process.env.TENANT_TABLE_NAME,
     IndexName: GSIs.GSI1,
     KeyConditionExpression: 'GSI1PK = :gsi1pk',
+    FilterExpression: '#status = :status',
     ExpressionAttributeValues: {
-      ':gsi1pk': gsi1key,
+      ':gsi1pk': GSI1PK,
+      ':status': status
+    },
+    ExpressionAttributeNames: {
+      '#status': 'status',
     },
     ProjectionExpression: `id, city, address`
   }));

@@ -8,8 +8,8 @@ UpdateProperty:
       Action:
         - dynamodb:UpdateItem
       Resource:
-        - "arn:aws:dynamodb:*:*:*"
+        - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
-        method: PUT
+        method: PATCH
         path: /properties/{id}

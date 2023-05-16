@@ -8,11 +8,9 @@ PropertyServiceTable:
         AttributeType: S
       - AttributeName: SK
         AttributeType: S
-      - AttributeName: status
+      - AttributeName: GSI1PK
         AttributeType: S
-      - AttributeName: notificationDate
-        AttributeType: N
-      - AttributeName: phone
+      - AttributeName: GSI2PK
         AttributeType: S
     KeySchema:
       - AttributeName: PK
@@ -22,27 +20,15 @@ PropertyServiceTable:
     StreamSpecification:
       StreamViewType: NEW_AND_OLD_IMAGES
     GlobalSecondaryIndexes:
-      - IndexName: StatusIndex
+      - IndexName: GSI1
         KeySchema:
-          - AttributeName: status
+          - AttributeName: GSI1PK
             KeyType: HASH
         Projection:
           ProjectionType: ALL
-      - IndexName: TenantIndex
+      - IndexName: GSI2
         KeySchema:
-          - AttributeName: PK
-            KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-      - IndexName: NotificationDateIndex
-        KeySchema:
-          - AttributeName: notificationDate
-            KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-      - IndexName: PhoneIndex
-        KeySchema:
-          - AttributeName: phone
+          - AttributeName: GSI2PK
             KeyType: HASH
         Projection:
           ProjectionType: ALL

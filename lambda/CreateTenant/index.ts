@@ -4,7 +4,7 @@ import {middyfy} from "@libs/lambda";
 import schema from "./schema";
 import {ddbDocClient} from "@libs/aws-client";
 import {Tenant} from "@models/tenant";
-import {BadRequest} from "http-errors";
+import {InternalServerError} from "http-errors";
 import {PutCommand} from "@aws-sdk/lib-dynamodb";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
@@ -24,7 +24,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
       tenant
     }, 201);
   }catch (e) {
-    const { message, statusCode } = new BadRequest(`Could not create tenant ${tenant.name}`)
+    const { message, statusCode } = new InternalServerError(`Create tenant failed`);
     return formatJSONResponse({ e, message }, statusCode);
   }
 };

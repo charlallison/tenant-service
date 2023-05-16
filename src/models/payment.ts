@@ -2,13 +2,14 @@ import { DateTime } from "luxon";
 import { v4 } from 'uuid';
 
 export class Payment {
-  PK: string;
-  SK: string;
-  propertyId: string;
-  tenantId: string
-  amount: number;
-  paidOn: number;
-  expiresOn: number;
+  readonly PK: string;
+  readonly SK: string;
+  readonly GSI1PK: string;
+  readonly propertyId: string;
+  readonly tenantId: string
+  readonly amount: number;
+  readonly paidOn: number;
+  readonly expiresOn: number;
   readonly Type: string = Payment.name;
 
   constructor(paymentData: Pick<Payment, 'tenantId' | 'propertyId' | 'amount'>) {
@@ -23,6 +24,8 @@ export class Payment {
     const {PK, SK} = Payment.BuildKeys(paymentData.tenantId);
     this.PK = PK;
     this.SK = SK;
+
+    this.GSI1PK = PK;
   }
 
   static BuildKeys(tenantId: string) {
@@ -31,4 +34,5 @@ export class Payment {
       SK: `payment#id=${ v4() }`
     }
   }
+
 }

@@ -8,12 +8,12 @@ import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
 export const main = async (event: DynamoDBStreamEvent) => {
   const { NewImage }: { [p: string]: any } = event.Records[0].dynamodb;
-  const payment= unmarshall(NewImage) as Payment;
+  const { tenantId, expiresOn } = unmarshall(NewImage) as Payment;
 
-  const notifyOn = DateTime.fromMillis(payment.expiresOn * 1000).minus({month: 1}).toUnixInteger();
+  const notifyOn = DateTime.fromMillis(expiresOn * 1000).minus({month: 1}).toUnixInteger();
 
   await ddbDocClient.send(new UpdateCommand({
-    Key: Tenant.BuildPK(payment.tenantId),
+    Key: Tenant.BuildPK(tenantId),
     TableName: process.env.TENANT_TABLE_NAME,
     UpdateExpression: 'SET notifyOn = :notifyOn, #status = :status',
     ExpressionAttributeValues: {

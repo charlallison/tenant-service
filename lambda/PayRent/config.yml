@@ -11,9 +11,9 @@ PayRent:
         - dynamodb:GetItem
         - dynamodb:PutItem
       Resource:
-        - "arn:aws:dynamodb:*:*:*"
-#        - ${self:custom.PropertyServiceTable.arn}
+        - !Join ["/", ["${self:custom.PropertyServiceTable.arn}", "index", "*"]]
+        - ${self:custom.PropertyServiceTable.arn}
   events:
     - http:
-        method: post
+        method: POST
         path: /tenants/{id}/pay

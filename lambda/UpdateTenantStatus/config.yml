@@ -1,6 +1,6 @@
-UpdateTenantOnPayment:
-  handler: ./lambda/UpdateTenantOnPayment/index.main
-  description: Update the notification date for the tenant
+UpdateTenantStatus:
+  handler: ./lambda/UpdateTenantStatus/index.main
+  description: Updates the notification date for the tenant
   memorySize: 128
   timeout: 10
   iamRoleStatements:
@@ -12,7 +12,7 @@ UpdateTenantOnPayment:
   events:
     - stream:
         type: dynamodb
-        arn: ${self:custom.PropertyServiceTableStream.arn}
+        arn: ${self:custom.PropertyServiceTable.streamArn}
         filterPatterns:
           - eventName: [INSERT]
             dynamodb:

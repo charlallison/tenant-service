@@ -12,7 +12,7 @@ UpdatePropertyStatus:
   events:
     - stream:
         type: dynamodb
-        arn: ${self:custom.PropertyServiceTableStream.arn}
+        arn: ${self:custom.PropertyServiceTable.streamArn}
         filterPatterns:
           - eventName: [INSERT]
             dynamodb:
