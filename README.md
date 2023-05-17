@@ -1,95 +1,73 @@
-# Serverless - AWS Node.js Typescript
+# Tenant Service
 
-This project has been generated using the `aws-nodejs-typescript` template from the [Serverless framework](https://www.serverless.com/).
+The Tenant Service is a serverless application built on AWS Lambda and other services using the Serverless Framework. It provides management of tenants and payments made for a property, as well as basic CRUD operations for properties.
 
-For detailed instructions, please refer to the [documentation](https://www.serverless.com/framework/docs/providers/aws/).
+![image](https://github.com/charlallison/tenant-service/assets/2844422/01d78232-97f4-4ab5-bc1f-c064fa0fa899)
 
-## Installation/deployment instructions
+## Features
+- Tenant Management: Create, update, and delete tenant information, including name, contact details, and property allocation.
+- Payment Management: Record and manage tenant payments, including payment amount, date, and payment status.
+- Property CRUD: Perform basic CRUD operations (Create, Read, Update, Delete) on property information, such as property details, address, and rental rates.
 
-Depending on your preferred package manager, follow the instructions below to deploy your project.
+## Architecture
+As seen in the architecture diagram above, the Tenant Service utilizes the following AWS services:
 
-> **Requirements**: NodeJS `lts/fermium (v.14.15.0)`. If you're using [nvm](https://github.com/nvm-sh/nvm), run `nvm use` to ensure you're using the same Node version in local and in your lambda's runtime.
+- **AWS Lambda:** Handles the serverless functions for processing tenant, payment and property operations.
+- **API Gateway:** Provides a RESTful API to interact with the service.
+- **DynamoDB:** Stores tenant and property data, as well as payment records.
+- **EventBridge (CloudWatch Events):** Stores static assets, such as property images or documents.
+- **API Gateway:** Automates the provisioning and management of AWS resources.
+- **SNS** Notifies tenants of a payment notification or payment reminder via SMS
 
-### Using NPM
+## Getting Started
+To get started with the Tenant Service, follow these steps:
+1. Clone the repository:
+    ```shell
+    git clone https://github.com/charlallison/tenant-service.git
+    ```
+2. Install dependencies:
+    ```shell
+   cd tenant-service
+   npm install
+   ```
+3. Configure AWS credentials:
 
-- Run `npm i` to install the project dependencies
-- Run `npx sls deploy` to deploy this stack to AWS
+    Ensure that you have valid AWS credentials setup using the AWS CLI otherwise follow the instructions on [how to set up your AWS credentials](https://medium.com/aws-in-plain-english/serverless-development-with-aws-33fd48089ec)
 
-### Using Yarn
+4. Configure service settings:
 
-- Run `yarn` to install the project dependencies
-- Run `yarn sls deploy` to deploy this stack to AWS
+    Open the serverless.yml file and update the `profile`, `service name`, `region`, etc. as needed.
 
-## Test your service
+5. Deploy the service using:
+    ```shell
+    sls deploy
+    ```
+6. Access the API:
 
-This template contains a single lambda function triggered by an HTTP request made on the provisioned API Gateway REST API `/hello` route with `POST` method. The request body must be provided as `application/json`. The body structure is tested by API Gateway against `src/functions/hello/schema.ts` JSON-Schema definition: it must contain the `name` property.
+   Once the deployment is successful, you will receive an API endpoint URL. Use this URL to interact with the Tenant Service using an API client such as cURL or Postman.
 
-- requesting any other path than `/hello` with any other method than `POST` will result in API Gateway returning a `403` HTTP error code
-- sending a `POST` request to `/hello` with a payload **not** containing a string property named `name` will result in API Gateway returning a `400` HTTP error code
-- sending a `POST` request to `/hello` with a payload containing a string property named `name` will result in API Gateway returning a `200` HTTP status code with a message saluting the provided name and the detailed event processed by the lambda
+## Usage
+The Tenant Service API provides the following endpoints:
 
-> :warning: As is, this template, once deployed, opens a **public** endpoint within your AWS account resources. Anybody with the URL can actively execute the API Gateway endpoint and the corresponding lambda. You should protect this endpoint with the authentication method of your choice.
+`GET /properties`: Retrieves a list of all properties.
 
-### Locally
+`GET /properties/{id}`: Retrieves a specific property by ID.
 
-In order to test the hello function locally, run the following command:
+`POST /properties`: Creates a new property.
 
-- `npx sls invoke local -f hello --path src/functions/hello/mock.json` if you're using NPM
-- `yarn sls invoke local -f hello --path src/functions/hello/mock.json` if you're using Yarn
+`PATCH /properties/{id}`: Updates an existing property.
 
-Check the [sls invoke local command documentation](https://www.serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/) for more information.
+`GET /tenants?status={status}`: Retrieves a list of all tenants.
 
-### Remotely
+`GET /tenants/{id}`: Retrieves a specific tenant by ID.
 
-Copy and replace your `url` - found in Serverless `deploy` command output - and `name` parameter in the following `curl` command in your terminal or in Postman to test your newly deployed application.
+`POST /tenants`: Creates a new tenant.
 
-```
-curl --location --request POST 'https://myApiEndpoint/dev/hello' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "name": "Frederic"
-}'
-```
+`PATCH /tenants/{id}`: Updates an existing tenant.
 
-## Template features
+`DELETE /tenants/{id}`: Deletes a tenant.
 
-### Project structure
+Refer to the API documentation or code for detailed request and response formats.
 
-The project code base is mainly located within the `src` folder. This folder is divided in:
-
-- `functions` - containing code base and configuration for your lambda functions
-- `libs` - containing shared code base between your lambdas
-
-```
-.
-├── src
-│   ├── functions               # Lambda configuration and source code folder
-│   │   ├── hello
-│   │   │   ├── index.ts      # `Hello` lambda source code
-│   │   │   ├── index.ts        # `Hello` lambda Serverless configuration
-│   │   │   ├── mock.json       # `Hello` lambda input parameter, if any, for local invocation
-│   │   │   └── schema.ts       # `Hello` lambda input event JSON-Schema
-│   │   │
-│   │   └── index.ts            # Import/export of all lambda configurations
-│   │
-│   └── libs                    # Lambda shared code
-│       └── apiGateway.ts       # API Gateway specific helpers
-│       └── handlerResolver.ts  # Sharable library for resolving lambda handlers
-│       └── lambda.ts           # Lambda middleware
-│
-├── package.json
-├── serverless.ts.bak               # Serverless service file
-├── tsconfig.json               # Typescript compiler configuration
-├── tsconfig.paths.json         # Typescript paths
-└── webpack.config.js           # Webpack configuration
-```
-
-### 3rd party libraries
-
-- [json-schema-to-ts](https://github.com/ThomasAribart/json-schema-to-ts) - uses JSON-Schema definitions used by API Gateway for HTTP request validation to statically generate TypeScript types in your lambda's handler code base
-- [middy](https://github.com/middyjs/middy) - middleware engine for Node.Js lambda. This template uses [http-json-body-parser](https://github.com/middyjs/middy/tree/master/packages/http-json-body-parser) to convert API Gateway `event.body` property, originally passed as a stringified JSON, to its corresponding parsed object
-- [@serverless/typescript](https://github.com/serverless/typescript) - provides up-to-date TypeScript definitions for your `serverless.ts.bak` service file
-
-### Advanced usage
-
-Any tsconfig.json can be used, but if you do, set the environment variable `TS_NODE_CONFIG` for building the application, eg `TS_NODE_CONFIG=./tsconfig.app.json npx serverless webpack`
+## License
+The Tenant Service is open-source and available under the MIT License. Feel free to use, modify, and distribute the code as per the terms of the license.
