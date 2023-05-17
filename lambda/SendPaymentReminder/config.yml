@@ -14,5 +14,4 @@ SendPaymentReminder:
         - !Join ["/", ["${self:custom.DatabaseTable.arn}", "index", "*"]]
         - '*'
   events:
-    - schedule: cron(*/3 * * * ? *)
-#    - schedule: cron(0 12 1W * ? *)
+    - schedule: cron(0 12 1W * ? *)
