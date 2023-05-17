@@ -28,7 +28,10 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
 
   const tenants = result.Items.map(item => item as Tenant);
 
-  return formatJSONResponse({ tenants });
+  return formatJSONResponse({
+    count: tenants.length,
+    tenants
+  });
 }
 
 export const main = middyfy(handler, schema);

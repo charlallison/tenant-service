@@ -25,13 +25,20 @@ export class Payment {
     this.PK = PK;
     this.SK = SK;
 
-    this.GSI1PK = PK;
+    const { GSI1PK } = Payment.BuildGSIKeys(this.tenantId);
+    this.GSI1PK = GSI1PK;
   }
 
   static BuildKeys(tenantId: string) {
     return {
       PK: `tenant#id=${tenantId}`,
       SK: `payment#id=${ v4() }`
+    }
+  }
+
+  static BuildGSIKeys(tenantId: string) {
+    return {
+      GSI1PK: `tenant#id=${tenantId}`
     }
   }
 

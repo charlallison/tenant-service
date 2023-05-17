@@ -27,13 +27,10 @@ const handler:ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) 
     ProjectionExpression: `id, city, address`
   }));
 
-  if(result.Items.length == 0) {
-    return formatJSONResponse({message: 'No properties found'});
-  }
-
   const properties = result.Items.map(item => item as Property);
 
   return formatJSONResponse({
+    count: properties.length,
     properties
   })
 }

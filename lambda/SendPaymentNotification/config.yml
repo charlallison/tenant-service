@@ -12,7 +12,7 @@ SendPaymentNotification:
         - sns:Publish
       Resource:
         - ${self:custom.DatabaseTable.arn}
-        - 'arn:aws:sns:*:*:*'
+        - '*'
   events:
     - stream:
         type: dynamodb

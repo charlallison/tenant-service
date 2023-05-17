@@ -12,7 +12,7 @@ SendPaymentReminder:
         - sns:Publish
       Resource:
         - !Join ["/", ["${self:custom.DatabaseTable.arn}", "index", "*"]]
-        - arn:aws:sns:*:*:*
+        - '*'
   events:
     - schedule: cron(*/3 * * * ? *)
 #    - schedule: cron(0 12 1W * ? *)

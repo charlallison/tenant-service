@@ -39,7 +39,7 @@ export class Tenant {
 
   static BuildGSIKeys(prop?: {id: string}) {
     return {
-      GSI1PK: `profile#id=${prop?.id}`,
+      GSI1PK: `tenant#id=${prop?.id}`,
       GSI2PK: `type#${Tenant.name}`
     };
   }
