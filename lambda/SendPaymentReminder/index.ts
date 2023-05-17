@@ -25,14 +25,14 @@ export const main = async () => {
       '#name': 'name',
       '#phone': 'phone',
       '#status': 'status',
-      '#notifyOn': 'notifyOn'
+      '#notifyOn': 'notifyOn',
+      '#gsi2pk': 'GSI2PK',
     }
   }));
 
   response.Items.forEach(item => {
-    const { name, phone} = item as Pick<Tenant, 'name' | 'phone'>
+    const { name, phone } = item as Pick<Tenant, 'name' | 'phone'>;
     const message = `Hi ${name}, I hope you're doing great. This is a gentle reminder that your rent will expire next month. Please endeavour to pay in due time`
-
     sendSMS(message, phone, process.env.SENDER_ID)
   });
 };

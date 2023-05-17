@@ -1,16 +1,15 @@
 import {formatJSONResponse, ValidatedEventAPIGatewayProxyEvent} from "@libs/api-gateway";
 import schema from "./schema";
 import {middyfy} from "@libs/lambda";
-import {BadRequest, NotFound} from "http-errors";
+import {BadRequest, Forbidden, NotFound} from "http-errors";
 import {ddbDocClient} from "@libs/aws-client";
 import {Payment} from "@models/payment";
 import {Property, PropertyStatus} from "@models/property";
 import {GetCommand, PutCommand, QueryCommand} from "@aws-sdk/lib-dynamodb";
-import {Tenant} from "@models/tenant";
 import {GSIs} from "../gsi-index";
 
 const EXPECTED_RECORD_LENGTH: number = 2;
-const { message, statusCode } = new BadRequest(`Property not available`);
+const { message, statusCode } = new Forbidden(`Property not available`);
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   const { id } = event.pathParameters
@@ -24,7 +23,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
     return formatJSONResponse({ message }, statusCode);
   }
 
-  const record = await getTenantRecord(id);
+  const record = await findPaymentRecord(id);
 
   if(!record) {
     const { message, statusCode } = new NotFound(`Tenant not found`)
@@ -32,14 +31,14 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
   }
 
   if(record.length === EXPECTED_RECORD_LENGTH) {
-    payment = record[1] as Payment;
+    payment = record.find(item => item.Type === Payment.name) as Payment;
 
     if(payment.propertyId !== propertyId) {
       return formatJSONResponse({ message }, statusCode);
     }
   }
 
-  if(payment && property.status === PropertyStatus.NotAvailable && payment.tenantId !== id) {
+  if(property.status === PropertyStatus.NotAvailable && payment?.tenantId !== id) {
     return formatJSONResponse({ message }, statusCode);
   }
 
@@ -73,8 +72,8 @@ const findProperty = async (propertyId: string) => {
   }
 }
 
-const getTenantRecord = async(id: string) => {
-  const { GSI1PK } = Tenant.BuildGSIKeys({ id });
+const findPaymentRecord = async(id: string) => {
+  const { GSI1PK } = Payment.BuildGSIKeys(id);
 
   const response = await ddbDocClient.send(new QueryCommand({
     TableName: process.env.TENANT_TABLE_NAME,

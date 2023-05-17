@@ -9,6 +9,8 @@ export const main = async (event: DynamoDBStreamEvent) => {
   const payment = unmarshall(NewImage) as Payment;
 
   const { name, phone } = await getTenantById(payment.tenantId);
+  if(!name || !phone) return;
+
   const message = `Hi ${name}, Your payment of N${payment.amount} has been received.`;
 
   await sendSMS(message, phone, process.env.SENDER_ID)
