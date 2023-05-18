@@ -64,7 +64,5 @@ The Tenant Service API provides the following endpoints:
 
 `POST /tenants/{id}/pay`: Pays the rent for a property.
 
-Refer to the API documentation or code for detailed request and response formats.
-
 ## License
 The Tenant Service is open-source and available under the [MIT License](https://opensource.org/licenses/MIT). Feel free to use, modify, and distribute the code as per the terms of the license.
