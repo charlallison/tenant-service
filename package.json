@@ -11,8 +11,8 @@
     "node": ">=14.15.0"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.271.0",
-    "@aws-sdk/client-sns": "^3.282.0",
+    "@aws-sdk/client-dynamodb": "^3.351.0",
+    "@aws-sdk/client-sns": "^3.350.0",
     "@aws-sdk/lib-dynamodb": "^3.329.0",
     "@aws-sdk/util-dynamodb": "^3.271.0",
     "@middy/core": "^3.4.0",
